@@ -1,4 +1,4 @@
-# TWUMVANE - Rwanda Sign Language Platform
+# TWUMVANEee - Rwanda Sign Language Platform
 
 TWUMVANE is a web-based platform for Rwanda Sign Language (RSL) support. It combines a Flask backend with a browser-based frontend to provide:
 
