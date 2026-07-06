@@ -1,0 +1,49 @@
+{
+  "words": {
+    "hello": "hello.mp4",
+    "thank you": "thank_you.mp4",
+    "please": "please.mp4",
+    "yes": "yes.mp4",
+    "no": "no.mp4",
+    "water": "water.mp4",
+    "food": "food.mp4",
+    "help": "help.mp4",
+    "name": "name.mp4",
+    "how": "how.mp4",
+    "you": "you.mp4",
+    "i": "i.mp4",
+    "good": "good.mp4",
+    "morning": "morning.mp4",
+    "evening": "evening.mp4",
+    "my": "my.mp4",
+    "what": "what.mp4",
+    "moise": "upload_moise_20260412_094350_9f4829d0.webm"
+  },
+  "phrases": {
+    "good morning": [
+      "good",
+      "morning"
+    ],
+    "thank you very much": [
+      "thank",
+      "you",
+      "very",
+      "much"
+    ],
+    "my name is": [
+      "my",
+      "name",
+      "is"
+    ],
+    "how are you": [
+      "how",
+      "are",
+      "you"
+    ]
+  },
+  "metadata": {
+    "created": "2025-12-29T07:12:56.199206",
+    "last_updated": "2026-04-12T09:43:50.666704",
+    "version": "1.0"
+  }
+}

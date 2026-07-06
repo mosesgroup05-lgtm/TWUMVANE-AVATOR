@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSL - Text to Rwanda Sign Language</title>
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+        background: #020c19;
+        min-height: 100vh;
+        color: #fafdff;
+    }
+
+    .main-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    .header-section {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 30px;
+        background: #141e2b;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    }
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+    .lead {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 10px;
+        color: #fafdff;
+    }
+
+    /* ENHANCED CARD STYLING - FORMA STYLE */
+    .card {
+        background: #141e2b;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        margin-bottom: 25px;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(255, 255, 255, 0.05);
+        border-color: rgba(32, 139, 244, 0.3);
+    }
+
+    /* Card header */
+    .card-header {
+        background: linear-gradient(135deg, rgba(20, 30, 43, 0.9), rgba(25, 35, 48, 0.8));
+        border-radius: 12px 12px 0 0 !important;
+        font-weight: 600;
+        padding: 20px 25px;
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: #208bf4;
+    }
+
+    .card-header.bg-success {
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(69, 160, 73, 0.8)) !important;
+    }
+
+    .card-header.bg-primary {
+        background: linear-gradient(135deg, rgba(32, 139, 244, 0.9), rgba(28, 120, 215, 0.8)) !important;
+    }
+
+    .card-header.bg-info {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.9), rgba(68, 160, 141, 0.8)) !important;
+    }
+
+    .card-header.bg-warning {
+        background: linear-gradient(135deg, rgba(255, 217, 61, 0.9), rgba(255, 154, 61, 0.8)) !important;
+    }
+
+    .card-header.bg-secondary {
+        background: linear-gradient(135deg, rgba(108, 117, 125, 0.9), rgba(73, 80, 87, 0.8)) !important;
+    }
+
+    .card-header h4, .card-header h5 {
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: #ffffff;
+        font-family: "Montserrat", sans-serif;
+    }
+
+    .card-header i {
+        margin-right: 10px;
+        font-size: 1.2em;
+        color: #208bf4;
+    }
+
+    /* Card body */
+    .card-body {
+        padding: 25px;
+        color: #fafdff;
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Specific card types */
+    .card.text-center .card-body {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .card.h-100 {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card.h-100 .card-body {
+        flex: 1;
+    }
+
+    /* Video container styling */
+    .video-container {
+        background: rgba(0, 0, 0, 0.0);
+        border-radius: 15px;
+        overflow: hidden;
+        margin: 15px 0;
+        position: relative;
+        border: 1px solid rgba(0, 0, 0, 0.0);
+    }
+
+    /* Sign badges */
+    .sign-badge {
+        background: rgba(32, 139, 244, 0.1);
+        color: #fafdff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 1px solid rgba(32, 139, 244, 0.2);
+        font-weight: 500;
+    }
+
+    .sign-badge:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        border-color: rgba(32, 139, 244, 0.4);
+        background: rgba(32, 139, 244, 0.15);
+        color: #208bf4;
+    }
+
+    .sign-badge.active {
+        background: linear-gradient(135deg, #208bf4, #1c78d7);
+        color: white;
+        animation: pulse 2s infinite;
+        border-color: #208bf4;
+    }
+
+    .sign-badge.bg-success {
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.8), rgba(69, 160, 73, 0.7)) !important;
+    }
+
+    .sign-badge.bg-danger {
+        background: linear-gradient(135deg, rgba(244, 67, 54, 0.8), rgba(229, 57, 53, 0.7)) !important;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(32, 139, 244, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(32, 139, 244, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(32, 139, 244, 0); }
+    }
+
+    /* Button styling */
+    .btn-primary {
+        background: #208bf4;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #1c78d7;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(32, 139, 244, 0.3);
+    }
+
+    .btn-outline-secondary, .btn-outline-info {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fafdff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s;
+    }
+
+    .btn-outline-secondary:hover, .btn-outline-info:hover {
+        background: rgba(32, 139, 244, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        border-color: rgba(32, 139, 244, 0.5);
+        color: #208bf4;
+    }
+
+    .btn-outline-primary {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fafdff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s;
+    }
+
+    .btn-outline-primary:hover {
+        background: rgba(32, 139, 244, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        border-color: rgba(32, 139, 244, 0.4);
+        color: #208bf4;
+    }
+
+    /* Progress bar styling */
+    .progress-container {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        height: 20px;
+        margin: 20px 0;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-bar {
+        background: linear-gradient(to right, #208bf4, #1c78d7);
+        border-radius: 10px;
+        transition: width 0.5s ease;
+    }
+
+    /* Control buttons */
+    .control-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 10px;
+        font-size: 1.5rem;
+        transition: all 0.3s;
+        background: #208bf4;
+        color: white;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .control-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 25px rgba(32, 139, 244, 0.3);
+    }
+
+    .control-btn.btn-outline-primary {
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(32, 139, 244, 0.5);
+        color: #208bf4;
+    }
+
+    .control-btn.btn-success {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+    }
+
+    .control-btn.btn-warning {
+        background: linear-gradient(135deg, #FFD93D, #FF9A3D);
+    }
+
+    /* Form controls */
+    .form-control {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 8px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: #208bf4;
+        box-shadow: 0 0 0 0.25rem rgba(32, 139, 244, 0.25);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-check-input:checked {
+        background-color: #208bf4;
+        border-color: #208bf4;
+    }
+
+    .form-range::-webkit-slider-thumb {
+        background: #208bf4;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-range::-webkit-slider-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    /* Badge styling */
+    .badge {
+        font-weight: 500;
+        padding: 8px 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .badge.bg-primary {
+        background: rgba(32, 139, 244, 0.8) !important;
+        color: white !important;
+    }
+
+    .badge.bg-success {
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.8), rgba(69, 160, 73, 0.7)) !important;
+    }
+
+    .badge.bg-danger {
+        background: linear-gradient(135deg, rgba(244, 67, 54, 0.8), rgba(229, 57, 53, 0.7)) !important;
+    }
+
+    .badge.bg-info {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.8), rgba(68, 160, 141, 0.7)) !important;
+    }
+
+    /* Footer */
+    footer {
+        background: #141e2b;
+        color: #fafdff;
+        padding: 25px;
+        margin-top: 30px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    footer h5 {
+        color: #208bf4;
+        margin-bottom: 15px;
+        font-family: "Montserrat", sans-serif;
+    }
+
+    footer hr {
+        background: rgba(255, 255, 255, 0.1);
+        height: 1px;
+        margin: 20px 0;
+    }
+
+    /* Loading animation */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #208bf4;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Text colors */
+    .text-muted {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    .text-success {
+        color: #4CAF50 !important;
+    }
+
+    .text-danger {
+        color: #f44336 !important;
+    }
+
+    .text-warning {
+        color: #FFD93D !important;
+    }
+
+    .text-primary {
+        color: #208bf4 !important;
+    }
+
+    /* List styling */
+    .list-unstyled li {
+        margin-bottom: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+    }
+
+    .list-unstyled li:last-child {
+        border-bottom: none;
+    }
+
+    .list-unstyled li i {
+        margin-right: 10px;
+        width: 20px;
+        color: #208bf4;
+    }
+
+    /* Form labels */
+    .form-label {
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 8px;
+    }
+
+    /* Quick phrases */
+    .quick-phrase {
+        border-radius: 8px;
+        padding: 8px 15px;
+        margin: 3px;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .header-section {
+            padding: 20px;
+        }
+        
+        .logo, h1 {
+            font-size: 2rem;
+        }
+        
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            margin: 0 5px;
+        }
+        
+        .main-container {
+            padding: 10px;
+            margin: 15px auto;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+    }
+
+    /* Custom scrollbar */
+    #availableSigns {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 10px;
+        margin: -10px;
+    }
+
+    #availableSigns::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #availableSigns::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+    }
+
+    #availableSigns::-webkit-scrollbar-thumb {
+        background: rgba(32, 139, 244, 0.3);
+        border-radius: 3px;
+    }
+
+    #availableSigns::-webkit-scrollbar-thumb:hover {
+        background: rgba(32, 139, 244, 0.5);
+    }
+
+    /* Sequence display */
+    #sequenceDisplay {
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 10px;
+        margin: -10px;
+    }
+
+    /* Tips card special styling */
+    .card:has(.fa-lightbulb) .card-header {
+        background: linear-gradient(135deg, rgba(255, 217, 61, 0.9), rgba(255, 154, 61, 0.8)) !important;
+    }
+
+    /* Translation details card special styling */
+    .card:has(.fa-info-circle) .card-header {
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(69, 160, 73, 0.8)) !important;
+    }
+
+    /* Card titles */
+    .card h4, .card h5 {
+        color: #ffffff;
+        font-weight: 700;
+        font-family: "Montserrat", sans-serif;
+    }
+
+    .card p {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+    }
+
+    .card strong {
+        color: #208bf4;
+    }
+
+    /* Grid spacing */
+    .row {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+
+    .row > [class*="col-"] {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Links */
+    a {
+        color: #208bf4;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    a:hover {
+        color: rgba(32, 139, 244, 0.8);
+        text-decoration: none;
+    }
+
+    /* Section titles */
+    .section-title {
+        text-align: center;
+        padding-bottom: 20px;
+        position: relative;
+    }
+
+    .section-title h2 {
+        font-size: 13px;
+        letter-spacing: 1px;
+        font-weight: 700;
+        padding: 8px 20px;
+        margin: 0;
+        background: rgba(32, 139, 244, 0.2);
+        color: #208bf4;
+        display: inline-block;
+        text-transform: uppercase;
+        border-radius: 50px;
+        font-family: "Roboto", sans-serif;
+    }
+
+    .section-title div {
+        color: #ffffff;
+        margin: 10px 0 0 0;
+        font-size: 32px;
+        font-weight: 700;
+        font-family: "Montserrat", sans-serif;
+    }
+
+    .section-title div .description-title {
+        color: #208bf4;
+    }
+
+    /* Input focus effects */
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: #208bf4 !important;
+    }
+
+    /* Selection color */
+    ::selection {
+        background-color: rgba(32, 139, 244, 0.3);
+        color: white;
+    }
+
+    /* Forma specific utility classes */
+    .light-background {
+        background: #0b1727 !important;
+    }
+
+    .dark-background {
+        background: #000000 !important;
+    }
+
+    /* Gradient backgrounds for special elements */
+    .gradient-bg {
+        background: linear-gradient(135deg, rgba(32, 139, 244, 0.1), rgba(32, 139, 244, 0.05));
+        border: 1px solid rgba(32, 139, 244, 0.2);
+    }
+
+    /* Stats grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        background: #141e2b;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-item .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #208bf4;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .stat-item .stat-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.6);
+    }
+</style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="logo">
+                <i class="fas fa-hands"></i> RSL-Translator
+            </div>
+            <h1>Text to Rwanda Sign Language</h1>
+            <p class="lead">Bridging communication gaps through sign language technology</p>
+        </div>
+
+        <div class="container-fluid mt-4">
+            <div class="row">
+                <!-- Left Column: Input & Controls -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h4><i class="fas fa-keyboard"></i> Enter Text for Translation</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="textInput" class="form-label fw-bold">Enter English Text:</label>
+                                <textarea class="form-control" id="textInput" rows="4" 
+                                          placeholder="Type or paste text here. Example: 'Hello, my name is...'"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Translation Options:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoPlay" checked>
+                                    <label class="form-check-label" for="autoPlay">
+                                        Auto-play sequence
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showMissing" checked>
+                                    <label class="form-check-label" for="showMissing">
+                                        Highlight missing signs
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="speedControl" class="form-label fw-bold">
+                                    <i class="fas fa-tachometer-alt"></i> Playback Speed: 
+                                    <span id="speedValue" class="badge bg-primary">1.0x</span>
+                                </label>
+                                <input type="range" class="form-range" id="speedControl" min="0.5" max="2" step="0.1" value="1">
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button id="translateBtn" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-hands"></i> Translate to RSL
+                                </button>
+                                <button id="clearBtn" class="btn btn-outline-secondary">
+                                    <i class="fas fa-broom"></i> Clear All
+                                </button>
+                                <a href="/admin" class="btn btn-outline-info">
+                                    <i class="fas fa-cog"></i> Admin Panel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Phrases -->
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h4><i class="fas fa-bolt"></i> Quick Phrases</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2" id="quickPhrasesContainer">
+                                <!-- Quick phrases will be loaded here -->
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="hello">
+                                    Hello
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="thank you">
+                                    Thank You
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="good morning">
+                                    Good Morning
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="how are you">
+                                    How Are You
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="my name is">
+                                    My Name Is
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="i need help">
+                                    I Need Help
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Available Signs -->
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h4><i class="fas fa-list"></i> Available RSL Signs</h4>
+                            <small class="text-white-50">Click any sign to add it to the text</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="searchSigns" placeholder="Search signs...">
+                            </div>
+                            <div id="availableSigns" class="d-flex flex-wrap">
+                                <!-- Signs will be loaded here -->
+                                <div class="w-100 text-center py-3">
+                                    <div class="loading-spinner"></div>
+                                    <p class="mt-2 text-muted">Loading available signs...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Video Player & Translation -->
+                <div class="col-lg-8">
+                    <!-- Video Player Section -->
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4><i class="fas fa-video"></i> RSL Video Player</h4>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <h3 id="currentWord" class="text-white">Ready for translation...</h3>
+                            </div>
+                            
+                            <div class="video-container">
+                                <video id="videoPlayer" class="w-100" style="max-height: 350px;" muted>
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            
+                            <!-- Playback Controls -->
+                            <div class="my-4">
+                                <button id="prevBtn" class="btn btn-outline-primary control-btn">
+                                    <i class="fas fa-step-backward"></i>
+                                </button>
+                                <button id="playPauseBtn" class="btn btn-success control-btn">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button id="nextBtn" class="btn btn-outline-primary control-btn">
+                                    <i class="fas fa-step-forward"></i>
+                                </button>
+                                <button id="repeatBtn" class="btn btn-warning control-btn">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Progress -->
+                            <div class="progress-container">
+                                <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+                            </div>
+                            <p class="mt-2">
+                                Sign <span id="currentIndex" class="fw-bold">0</span> 
+                                of <span id="totalSigns" class="fw-bold">0</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Translation Sequence -->
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h4><i class="fas fa-project-diagram"></i> Sign Sequence</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="sequenceDisplay" class="d-flex flex-wrap justify-content-center">
+                                <!-- Sequence will appear here -->
+                                <div class="text-center w-100 py-4">
+                                    <i class="fas fa-hands fa-2x text-muted"></i>
+                                    <p class="mt-2 text-muted">No translation yet. Enter text and click Translate.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Translation Details -->
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5><i class="fas fa-info-circle"></i> Translation Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Original Text:</strong><br>
+                                    <span id="originalText" class="text-muted">-</span></p>
+                                    
+                                    <p><strong>Translation Type:</strong><br>
+                                    <span id="translationType" class="badge bg-info">-</span></p>
+                                    
+                                    <p><strong>Matched Signs:</strong>
+                                    <span id="matchedCount" class="badge bg-success">0</span></p>
+                                    
+                                    <p><strong>Missing Signs:</strong>
+                                    <span id="missingCount" class="badge bg-danger">0</span></p>
+                                    
+                                    <p><strong>Database Info:</strong><br>
+                                    <span id="databaseInfo" class="text-muted small">Loading...</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5><i class="fas fa-lightbulb"></i> Tips</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success"></i> Click any sign to play it directly</li>
+                                        <li><i class="fas fa-check text-success"></i> Adjust speed for learning purposes</li>
+                                        <li><i class="fas fa-check text-success"></i> Use quick phrases for common expressions</li>
+                                        <li><i class="fas fa-check text-success"></i> Missing signs are highlighted in red</li>
+                                        <li><i class="fas fa-check text-success"></i> Current sign has a pulsing animation</li>
+                                        <li><i class="fas fa-check text-success"></i> Click on available signs to add them to text</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+<br>
+
+<div class="card">
+    <div class="card-header bg-secondary text-white">
+        <h4><i class="fas fa-hands"></i> Sign Language Alphabet & Numbers</h4>
+        <small class="text-white-50">Visual representation of hand signs</small>
+    </div>
+    <div class="card-body">
+        <div class="mb-4">
+            <h5 class="text-white border-bottom pb-2 mb-3">Numbers (1-9)</h5>
+            <div class="row g-3 mb-4">
+                <!-- Numbers 1-9 -->
+                <div class="col-4 col-md-2 text-center">
+                    <div class="sign-symbol p-3 bg-dark bg-opacity-25 rounded">
+                        <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <!-- Replace with actual image: 1.png -->
+                                 <img src="images/1.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                                <span style="font-size: 1.5rem;"></span>
+                            </div>
+                        </div>
+                        <h4 class="mb-2">1</h4>
+                        <small class="d-block">Index finger up</small>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <div class="sign-symbol p-3 bg-dark bg-opacity-25 rounded">
+                        <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                               
+                                 <img src="images/2.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                                <span style="font-size: 1.5rem;"></span>
+                            </div>
+                        </div>
+                        <h4 class="mb-2">2</h4>
+                        <small class="d-block">Peace sign</small>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <div class="sign-symbol p-3 bg-dark bg-opacity-25 rounded">
+                        <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <!-- Replace with actual image: 3.png -->
+                                 <img src="images/3.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                                <span style="font-size: 1.5rem;"></span>
+                            </div>
+                        </div>
+                        <h4 class="mb-2">3</h4>
+                        <small class="d-block">Three fingers</small>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <div class="sign-symbol p-3 bg-dark bg-opacity-25 rounded">
+                        <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <!-- Replace with actual image: 4.png -->
+                                 <img src="images/4.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                                <span style="font-size: 1.5rem;"></span>
+                            </div>
+                        </div>
+                        <h4 class="mb-2">4</h4>
+                        <small class="d-block">Four fingers</small>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <div class="sign-symbol p-3 bg-dark bg-opacity-25 rounded">
+                        <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <!-- Replace with actual image: 5.png -->
+                                  <img src="images/5.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                                <span style="font-size: 1.5rem;"></span>
+                            </div>
+                        </div>
+                        <h4 class="mb-2">5</h4>
+                        <small class="d-block">Open hand</small>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <div class="sign-symbol p-3 bg-dark bg-opacity-25 rounded">
+                        <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <!-- Replace with actual image: 6.png -->
+                                  <img src="images/6.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                                <span style="font-size: 1.5rem;"></span>
+                            </div>
+                        </div>
+                        <h4 class="mb-2">6</h4>
+                        <small class="d-block">Call me hand</small>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <div class="sign-symbol p-3 bg-dark bg-opacity-25 rounded">
+                        <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <!-- Replace with actual image: 7.png -->
+                                  <img src="images/7.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                                <span style="font-size: 1.5rem;"></span>
+                            </div>
+                        </div>
+                        <h4 class="mb-2">7</h4>
+                        <small class="d-block">Vulcan salute</small>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <div class="sign-symbol p-3 bg-dark bg-opacity-25 rounded">
+                        <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <!-- Replace with actual image: 8.png -->
+                                  <img src="images/8.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                                <span style="font-size: 1.5rem;"></span>
+                            </div>
+                        </div>
+                        <h4 class="mb-2">8</h4>
+                        <small class="d-block">Pointing finger</small>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <div class="sign-symbol p-3 bg-dark bg-opacity-25 rounded">
+                        <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <!-- Replace with actual image: 9.png -->
+                                  <img src="images/9.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                                <span style="font-size: 1.5rem;"></span>
+                            </div>
+                        </div>
+                        <h4 class="mb-2">9</h4>
+                        <small class="d-block">Rock on</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="text-white border-bottom pb-2 mb-3">Alphabet (A-Z)</h5>
+        <div class="row g-3">
+            <!-- Row 1: A-F -->
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: A.png -->
+                              <img src="images/A.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                            <span style="font-size: 1.5rem;"></span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">A</h4>
+                    <small class="d-block">Fist</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: B.png -->
+                              <img src="images/B.png" alt="Sign for A" style="width: 50px; height: 60px; object-fit: contain; border-radius: 15px;">
+                            <span style="font-size: 1.5rem;"></span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">B</h4>
+                    <small class="d-block">Stop hand</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: C.png -->
+                            <span style="font-size: 1.5rem;">C</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">C</h4>
+                    <small class="d-block">OK hand</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: D.png -->
+                            <span style="font-size: 1.5rem;">D</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">D</h4>
+                    <small class="d-block">Point up</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: E.png -->
+                            <span style="font-size: 1.5rem;">E</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">E</h4>
+                    <small class="d-block">Pinching hand</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: F.png -->
+                            <span style="font-size: 1.5rem;">F</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">F</h4>
+                    <small class="d-block">Love-you</small>
+                </div>
+            </div>
+
+            <!-- Row 2: G-L -->
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: G.png -->
+                            <span style="font-size: 1.5rem;">G</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">G</h4>
+                    <small class="d-block">Point down</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: H.png -->
+                            <span style="font-size: 1.5rem;">H</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">H</h4>
+                    <small class="d-block">Peace sign</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: I.png -->
+                            <span style="font-size: 1.5rem;">I</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">I</h4>
+                    <small class="d-block">Thumbs up</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: J.png -->
+                            <span style="font-size: 1.5rem;">J</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">J</h4>
+                    <small class="d-block">Waving hand</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: K.png -->
+                            <span style="font-size: 1.5rem;">K</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">K</h4>
+                    <small class="d-block">Middle finger</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: L.png -->
+                            <span style="font-size: 1.5rem;">L</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">L</h4>
+                    <small class="d-block">Crossed fingers</small>
+                </div>
+            </div>
+
+            <!-- Row 3: M-R -->
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: M.png -->
+                            <span style="font-size: 1.5rem;">M</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">M</h4>
+                    <small class="d-block">Raised fist</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: N.png -->
+                            <span style="font-size: 1.5rem;">N</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">N</h4>
+                    <small class="d-block">Oncoming fist</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: O.png -->
+                            <span style="font-size: 1.5rem;">O</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">O</h4>
+                    <small class="d-block">OK gesture</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: P.png -->
+                            <span style="font-size: 1.5rem;">P</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">P</h4>
+                    <small class="d-block">Call me</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: Q.png -->
+                            <span style="font-size: 1.5rem;">Q</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">Q</h4>
+                    <small class="d-block">Point left</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: R.png -->
+                            <span style="font-size: 1.5rem;">R</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">R</h4>
+                    <small class="d-block">Point right</small>
+                </div>
+            </div>
+
+            <!-- Row 4: S-X -->
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: S.png -->
+                            <span style="font-size: 1.5rem;">S</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">S</h4>
+                    <small class="d-block">Rock on</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: T.png -->
+                            <span style="font-size: 1.5rem;">T</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">T</h4>
+                    <small class="d-block">Backhand index</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: U.png -->
+                            <span style="font-size: 1.5rem;">U</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">U</h4>
+                    <small class="d-block">Backhand down</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: V.png -->
+                            <span style="font-size: 1.5rem;">V</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">V</h4>
+                    <small class="d-block">Victory</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: W.png -->
+                            <span style="font-size: 1.5rem;">W</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">W</h4>
+                    <small class="d-block">Vulcan</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: X.png -->
+                            <span style="font-size: 1.5rem;">X</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">X</h4>
+                    <small class="d-block">Pinched</small>
+                </div>
+            </div>
+
+            <!-- Row 5: Y,Z -->
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: Y.png -->
+                            <span style="font-size: 1.5rem;">Y</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">Y</h4>
+                    <small class="d-block">Hang loose</small>
+                </div>
+            </div>
+            <div class="col-4 col-md-2 text-center">
+                <div class="sign-symbol p-3 bg-primary bg-opacity-25 rounded">
+                    <div class="hand-image mb-2" style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <!-- Replace with actual image: Z.png -->
+                            <span style="font-size: 1.5rem;">Z</span>
+                        </div>
+                    </div>
+                    <h4 class="mb-2">Z</h4>
+                    <small class="d-block">OK circle</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions for adding images -->
+        <div class="mt-4 pt-3 border-top border-secondary">
+            <div class="alert alert-info bg-info bg-opacity-10 border-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>To add actual sign language images:</strong>
+                <ol class="mt-2 mb-0">
+                    <li>Create an images folder in your project</li>
+                    <li>Add image files named: A.png, B.png, C.png, ..., Z.png, 1.png, 2.png, ..., 9.png</li>
+                    <li>Replace the placeholder divs with actual img tags:</li>
+                </ol>
+            </div>
+            
+            <div class="alert alert-warning bg-warning bg-opacity-10 border-warning mt-2">
+                <i class="fas fa-lightbulb me-2"></i>
+                <strong>Tip:</strong> Ensure all images have consistent dimensions and white backgrounds for better visual consistency.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-hands"></i> RSL</h5>
+                    <p>Text to Rwanda Sign Language Translator</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Features</h5>
+                    <p>Real-time Translation • Video Playback • Learning Tools</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Technology</h5>
+                    <p>Flask Backend • Bootstrap Frontend • JavaScript</p>
+                </div>
+            </div>
+            <hr style="background: rgba(255, 255, 255, 0.3);">
+            <p class="mb-0">© 2024 RSL Project. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        // Application state
+        let currentTranslation = null;
+        let currentIndex = 0;
+        let isPlaying = false;
+        let playbackSpeed = 1.0;
+        let availableSigns = [];
+        let availablePhrases = [];
+        let videoSequence = [];
+        
+        // DOM Elements
+        const textInput = document.getElementById('textInput');
+        const translateBtn = document.getElementById('translateBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const currentWord = document.getElementById('currentWord');
+        const progressBar = document.getElementById('progressBar');
+        const currentIndexSpan = document.getElementById('currentIndex');
+        const totalSignsSpan = document.getElementById('totalSigns');
+        const sequenceDisplay = document.getElementById('sequenceDisplay');
+        const originalText = document.getElementById('originalText');
+        const translationType = document.getElementById('translationType');
+        const matchedCount = document.getElementById('matchedCount');
+        const missingCount = document.getElementById('missingCount');
+        const databaseInfo = document.getElementById('databaseInfo');
+        const availableSignsContainer = document.getElementById('availableSigns');
+        const quickPhrasesContainer = document.getElementById('quickPhrasesContainer');
+        const searchSigns = document.getElementById('searchSigns');
+        const speedControl = document.getElementById('speedControl');
+        const speedValue = document.getElementById('speedValue');
+        const autoPlay = document.getElementById('autoPlay');
+        const showMissing = document.getElementById('showMissing');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const repeatBtn = document.getElementById('repeatBtn');
+        
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApplication();
+        });
+        
+        function initializeApplication() {
+            // Load available signs and phrases
+            loadAvailableSigns();
+            loadDatabaseInfo();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Setup video player events
+            setupVideoPlayer();
+            
+            // Load quick phrases
+            loadQuickPhrases();
+        }
+        
+        function setupEventListeners() {
+            // Translate button
+            translateBtn.addEventListener('click', translateText);
+            
+            // Clear button
+            clearBtn.addEventListener('click', clearAll);
+            
+            // Speed control
+            speedControl.addEventListener('input', function() {
+                playbackSpeed = parseFloat(this.value);
+                speedValue.textContent = `${playbackSpeed.toFixed(1)}x`;
+                if (videoPlayer.src) {
+                    videoPlayer.playbackRate = playbackSpeed;
+                }
+            });
+            
+            // Search signs
+            let searchTimeout;
+            searchSigns.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    filterAvailableSigns(this.value);
+                }, 300);
+            });
+            
+            // Control buttons
+            prevBtn.addEventListener('click', playPrevious);
+            nextBtn.addEventListener('click', playNext);
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            repeatBtn.addEventListener('click', repeatCurrent);
+            
+            // Auto-play next video when current ends
+            videoPlayer.addEventListener('ended', function() {
+                if (autoPlay.checked && currentIndex < videoSequence.length - 1) {
+                    playNext();
+                } else {
+                    isPlaying = false;
+                    updatePlayPauseButton();
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + Enter to translate
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    translateText();
+                }
+                
+                // Space to play/pause
+                if (e.key === ' ' && !e.target.matches('textarea, input')) {
+                    e.preventDefault();
+                    togglePlayPause();
+                }
+                
+                // Arrow keys for navigation
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    playPrevious();
+                }
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    playNext();
+                }
+            });
+        }
+        
+        function setupVideoPlayer() {
+            videoPlayer.addEventListener('play', function() {
+                isPlaying = true;
+                updatePlayPauseButton();
+            });
+            
+            videoPlayer.addEventListener('pause', function() {
+                isPlaying = false;
+                updatePlayPauseButton();
+            });
+            
+            videoPlayer.addEventListener('timeupdate', function() {
+                if (videoPlayer.duration > 0) {
+                    const progress = (videoPlayer.currentTime / videoPlayer.duration) * 100;
+                    progressBar.style.width = `${progress}%`;
+                }
+            });
+        }
+        
+        function updatePlayPauseButton() {
+            const icon = playPauseBtn.querySelector('i');
+            if (isPlaying) {
+                icon.className = 'fas fa-pause';
+                playPauseBtn.classList.remove('btn-success');
+                playPauseBtn.classList.add('btn-warning');
+            } else {
+                icon.className = 'fas fa-play';
+                playPauseBtn.classList.remove('btn-warning');
+                playPauseBtn.classList.add('btn-success');
+            }
+        }
+        
+        async function loadAvailableSigns() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/available-words`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    availableSigns = data.words || [];
+                    availablePhrases = data.phrases || [];
+                    
+                    displayAvailableSigns(availableSigns);
+                    
+                    // Update database info
+                    databaseInfo.textContent = `${data.words.length} signs, ${data.phrases.length} phrases available`;
+                } else {
+                    throw new Error(data.error || 'Failed to load signs');
+                }
+            } catch (error) {
+                console.error('Error loading available signs:', error);
+                availableSignsContainer.innerHTML = `
+                    <div class="w-100 text-center py-3">
+                        <i class="fas fa-exclamation-triangle text-danger fa-2x"></i>
+                        <p class="mt-2 text-danger">Failed to load signs. Please try again.</p>
+                        <button class="btn btn-sm btn-outline-primary" onclick="loadAvailableSigns()">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayAvailableSigns(signs) {
+            availableSignsContainer.innerHTML = '';
+            
+            if (signs.length === 0) {
+                availableSignsContainer.innerHTML = `
+                    <div class="w-100 text-center py-3">
+                        <i class="fas fa-info-circle text-muted fa-2x"></i>
+                        <p class="mt-2 text-muted">No signs available yet.</p>
+                        <a href="/admin" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-upload"></i> Upload Signs
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            signs.forEach(sign => {
+                const badge = document.createElement('span');
+                badge.className = 'sign-badge';
+                badge.textContent = sign;
+                badge.title = `Click to add "${sign}" to text`;
+                badge.style.cursor = 'pointer';
+                
+                badge.addEventListener('click', () => {
+                    addWordToText(sign);
+                });
+                
+                availableSignsContainer.appendChild(badge);
+            });
+        }
+        
+        function filterAvailableSigns(searchTerm) {
+            if (!searchTerm.trim()) {
+                displayAvailableSigns(availableSigns);
+                return;
+            }
+            
+            const filtered = availableSigns.filter(sign => 
+                sign.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            displayAvailableSigns(filtered);
+        }
+        
+        function loadQuickPhrases() {
+            // Get phrases from database or use defaults
+            const defaultPhrases = [
+                { phrase: "hello", display: "Hello" },
+                { phrase: "thank you", display: "Thank You" },
+                { phrase: "good morning", display: "Good Morning" },
+                { phrase: "how are you", display: "How Are You" },
+                { phrase: "my name is", display: "My Name Is" },
+                { phrase: "i need help", display: "I Need Help" }
+            ];
+            
+            quickPhrasesContainer.innerHTML = '';
+            
+            defaultPhrases.forEach(item => {
+                const button = document.createElement('button');
+                button.className = 'btn btn-outline-primary quick-phrase';
+                button.dataset.phrase = item.phrase;
+                button.textContent = item.display;
+                
+                button.addEventListener('click', function() {
+                    addPhraseToText(item.phrase);
+                });
+                
+                quickPhrasesContainer.appendChild(button);
+            });
+            
+            // Also load actual phrases from database
+            if (availablePhrases.length > 0) {
+                availablePhrases.forEach(phrase => {
+                    if (!defaultPhrases.some(p => p.phrase === phrase)) {
+                        const button = document.createElement('button');
+                        button.className = 'btn btn-outline-success quick-phrase mt-1';
+                        button.dataset.phrase = phrase;
+                        button.textContent = phrase.charAt(0).toUpperCase() + phrase.slice(1);
+                        
+                        button.addEventListener('click', function() {
+                            addPhraseToText(phrase);
+                        });
+                        
+                        quickPhrasesContainer.appendChild(button);
+                    }
+                });
+            }
+        }
+        
+        function addWordToText(word) {
+            const textarea = textInput;
+            const currentText = textarea.value.trim();
+            
+            if (currentText) {
+                textarea.value = currentText + ' ' + word;
+            } else {
+                textarea.value = word;
+            }
+            
+            textarea.focus();
+            
+            // Show feedback
+            showToast(`Added "${word}" to text`, 'success');
+        }
+        
+        function addPhraseToText(phrase) {
+            const textarea = textInput;
+            const currentText = textarea.value.trim();
+            
+            if (currentText) {
+                textarea.value = currentText + ' ' + phrase;
+            } else {
+                textarea.value = phrase;
+            }
+            
+            textarea.focus();
+            
+            // Show feedback
+            showToast(`Added phrase "${phrase}" to text`, 'success');
+        }
+        
+        async function loadDatabaseInfo() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/stats`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    databaseInfo.textContent = 
+                        `${data.total_words} words, ${data.total_phrases} phrases, ${data.total_videos} videos`;
+                }
+            } catch (error) {
+                console.error('Error loading database info:', error);
+            }
+        }
+        
+        async function translateText() {
+            const text = textInput.value.trim();
+            
+            if (!text) {
+                showToast('Please enter some text to translate', 'error');
+                textInput.focus();
+                return;
+            }
+            
+            // Show loading state
+            translateBtn.innerHTML = '<span class="loading-spinner"></span> Translating...';
+            translateBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/translate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    processTranslation(data);
+                    showToast('Translation successful!', 'success');
+                } else {
+                    throw new Error(data.error || 'Translation failed');
+                }
+            } catch (error) {
+                console.error('Translation error:', error);
+                showToast(`Translation error: ${error.message}`, 'error');
+            } finally {
+                // Reset button state
+                translateBtn.innerHTML = '<i class="fas fa-hands"></i> Translate to RSL';
+                translateBtn.disabled = false;
+            }
+        }
+        
+        function processTranslation(data) {
+            // Store current translation
+            currentTranslation = data;
+            videoSequence = data.video_sequence || [];
+            currentIndex = 0;
+            
+            // Update translation details
+            originalText.textContent = data.original_text;
+            translationType.textContent = data.translation_type;
+            
+            const matched = videoSequence.filter(v => v.has_video).length;
+            const missing = videoSequence.filter(v => !v.has_video).length;
+            
+            matchedCount.textContent = matched;
+            missingCount.textContent = missing;
+            
+            // Display sequence
+            displaySequence(videoSequence);
+            
+            // Update progress
+            totalSignsSpan.textContent = videoSequence.length;
+            
+            // Play first video if available
+            const firstVideo = videoSequence.find(v => v.has_video);
+            if (firstVideo && autoPlay.checked) {
+                playVideo(firstVideo, 0);
+            } else if (firstVideo) {
+                // Just update display without playing
+                updateVideoDisplay(firstVideo, 0);
+            } else {
+                currentWord.textContent = 'No translation for this Word';
+                videoPlayer.src = '';
+                currentIndexSpan.textContent = '0';
+                progressBar.style.width = '0%';
+            }
+            
+            // Enable/disable navigation buttons
+            updateNavigationButtons();
+        }
+        
+        function displaySequence(sequence) {
+            sequenceDisplay.innerHTML = '';
+            
+            if (sequence.length === 0) {
+                sequenceDisplay.innerHTML = `
+                    <div class="text-center w-100 py-4">
+                        <i class="fas fa-exclamation-triangle text-warning fa-2x"></i>
+                        <p class="mt-2 text-muted">No signs found for translation.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            sequence.forEach((item, index) => {
+                const badge = document.createElement('span');
+                badge.className = `sign-badge ${item.has_video ? 'bg-success' : 'bg-danger'}`;
+                badge.textContent = item.word;
+                
+                if (item.has_video) {
+                    badge.style.cursor = 'pointer';
+                    badge.title = `Play "${item.word}" sign`;
+                    badge.addEventListener('click', () => {
+                        playVideo(item, index);
+                    });
+                } else {
+                    badge.title = `No video available for "${item.word}"`;
+                }
+                
+                sequenceDisplay.appendChild(badge);
+            });
+            
+            // Highlight first available sign
+            const firstAvailable = sequence.findIndex(v => v.has_video);
+            if (firstAvailable >= 0) {
+                const badges = sequenceDisplay.querySelectorAll('.sign-badge');
+                if (badges[firstAvailable]) {
+                    badges[firstAvailable].classList.add('active');
+                }
+            }
+        }
+        
+        function playVideo(videoItem, index) {
+            if (!videoItem || !videoItem.has_video) {
+                showToast(`No video available for "${videoItem?.word}"`, 'warning');
+                return;
+            }
+            
+            // Update current index
+            currentIndex = index;
+            currentIndexSpan.textContent = index + 1;
+            
+            // Update video source
+            videoPlayer.src = videoItem.video_url;
+            videoPlayer.playbackRate = playbackSpeed;
+            
+            // Update current word display
+            currentWord.textContent = videoItem.word;
+            
+            // Play the video
+            if (autoPlay.checked) {
+                videoPlayer.play().catch(e => {
+                    console.error('Playback error:', e);
+                    showToast('Could not play video. Please try again.', 'error');
+                });
+            }
+            
+            // Update progress
+            const progress = ((index + 1) / videoSequence.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Highlight current sign in sequence
+            const badges = sequenceDisplay.querySelectorAll('.sign-badge');
+            badges.forEach((badge, i) => {
+                badge.classList.remove('active');
+                if (i === index) {
+                    badge.classList.add('active');
+                }
+            });
+            
+            // Update navigation buttons
+            updateNavigationButtons();
+        }
+        
+        function updateVideoDisplay(videoItem, index) {
+            if (!videoItem || !videoItem.has_video) return;
+            
+            currentIndex = index;
+            currentIndexSpan.textContent = index + 1;
+            currentWord.textContent = videoItem.word;
+            
+            const progress = ((index + 1) / videoSequence.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            const badges = sequenceDisplay.querySelectorAll('.sign-badge');
+            badges.forEach((badge, i) => {
+                badge.classList.remove('active');
+                if (i === index) {
+                    badge.classList.add('active');
+                }
+            });
+            
+            updateNavigationButtons();
+        }
+        
+        function playPrevious() {
+            if (videoSequence.length === 0) return;
+            
+            // Find previous available video
+            let prevIndex = currentIndex - 1;
+            while (prevIndex >= 0) {
+                if (videoSequence[prevIndex].has_video) {
+                    playVideo(videoSequence[prevIndex], prevIndex);
+                    return;
+                }
+                prevIndex--;
+            }
+            
+            showToast('No previous sign available', 'info');
+        }
+        
+        function playNext() {
+            if (videoSequence.length === 0) return;
+            
+            // Find next available video
+            let nextIndex = currentIndex + 1;
+            while (nextIndex < videoSequence.length) {
+                if (videoSequence[nextIndex].has_video) {
+                    playVideo(videoSequence[nextIndex], nextIndex);
+                    return;
+                }
+                nextIndex++;
+            }
+            
+            showToast('No next sign available', 'info');
+        }
+        
+        function togglePlayPause() {
+            if (!videoPlayer.src) return;
+            
+            if (videoPlayer.paused) {
+                videoPlayer.play().catch(e => {
+                    console.error('Playback error:', e);
+                    showToast('Could not play video', 'error');
+                });
+            } else {
+                videoPlayer.pause();
+            }
+        }
+        
+        function repeatCurrent() {
+            if (!videoPlayer.src) return;
+            
+            videoPlayer.currentTime = 0;
+            if (videoPlayer.paused) {
+                videoPlayer.play().catch(e => {
+                    console.error('Playback error:', e);
+                });
+            }
+            
+            showToast('Repeating current sign', 'info');
+        }
+        
+        function updateNavigationButtons() {
+            // Previous button
+            const hasPrevious = videoSequence.slice(0, currentIndex).some(v => v.has_video);
+            prevBtn.disabled = !hasPrevious;
+            prevBtn.title = hasPrevious ? 'Previous sign' : 'No previous sign';
+            
+            // Next button
+            const hasNext = videoSequence.slice(currentIndex + 1).some(v => v.has_video);
+            nextBtn.disabled = !hasNext;
+            nextBtn.title = hasNext ? 'Next sign' : 'No next sign';
+            
+            // Play/Pause button
+            playPauseBtn.disabled = !videoPlayer.src;
+            
+            // Repeat button
+            repeatBtn.disabled = !videoPlayer.src;
+        }
+        
+        function clearAll() {
+            // Clear text input
+            textInput.value = '';
+            
+            // Clear translation display
+            currentTranslation = null;
+            videoSequence = [];
+            currentIndex = 0;
+            
+            // Reset video player
+            videoPlayer.src = '';
+            currentWord.textContent = 'Ready for translation...';
+            currentIndexSpan.textContent = '0';
+            totalSignsSpan.textContent = '0';
+            progressBar.style.width = '0%';
+            
+            // Clear sequence display
+            sequenceDisplay.innerHTML = `
+                <div class="text-center w-100 py-4">
+                    <i class="fas fa-hands fa-2x text-muted"></i>
+                    <p class="mt-2 text-muted">No translation yet. Enter text and click Translate.</p>
+                </div>
+            `;
+            
+            // Clear translation details
+            originalText.textContent = '-';
+            translationType.textContent = '-';
+            matchedCount.textContent = '0';
+            missingCount.textContent = '0';
+            
+            // Reset navigation buttons
+            updateNavigationButtons();
+            isPlaying = false;
+            updatePlayPauseButton();
+            
+            // Focus on text input
+            textInput.focus();
+            
+            showToast('All cleared', 'info');
+        }
+        
+        function showToast(message, type = 'info') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast-container');
+            existingToasts.forEach(toast => toast.remove());
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            
+            // Add to container
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '1050';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            
+            // Initialize and show toast
+            const bsToast = new bootstrap.Toast(toast, { 
+                delay: type === 'error' ? 5000 : 3000 
+            });
+            bsToast.show();
+            
+            // Remove after hiding
+            toast.addEventListener('hidden.bs.toast', function () {
+                container.remove();
+            });
+        }
+        
+        // Expose functions to global scope for HTML onclick handlers
+        window.addWordToText = addWordToText;
+        window.addPhraseToText = addPhraseToText;
+        window.translateText = translateText;
+        window.clearAll = clearAll;
+        window.loadAvailableSigns = loadAvailableSigns;
+    </script>
+</body>
+</html>

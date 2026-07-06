@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSL - Text to Rwanda Sign Language</title>
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .header-section {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+            font-weight: 600;
+            padding: 15px 20px;
+        }
+        
+        .video-container {
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .sign-badge {
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 10px 15px;
+            border-radius: 25px;
+            margin: 5px;
+        }
+        
+        .sign-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .sign-badge.active {
+            background: linear-gradient(to right, #4CAF50, #45a049);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--secondary-color), #2980b9);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, #2980b9, var(--secondary-color));
+            transform: translateY(-2px);
+        }
+        
+        .progress-container {
+            background: #f1f1f1;
+            border-radius: 10px;
+            height: 20px;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        /* Video debug info */
+        .video-debug {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 10;
+            display: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-section {
+                padding: 20px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                margin: 0 5px;
+            }
+        }
+        
+        /* Loading animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Video player styling */
+        #videoPlayer {
+            background: #000;
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+        }
+        
+        .video-container:hover .video-debug {
+            display: block;
+        }
+        
+        /* Badge colors for different types */
+        .badge.bg-info {
+            background: linear-gradient(to right, #17a2b8, #138496) !important;
+        }
+        
+        .badge.bg-warning {
+            background: linear-gradient(to right, #ffc107, #e0a800) !important;
+        }
+        
+        .badge.bg-success {
+            background: linear-gradient(to right, #28a745, #218838) !important;
+        }
+        
+        .badge.bg-danger {
+            background: linear-gradient(to right, #dc3545, #c82333) !important;
+        }
+        
+        .badge.bg-primary {
+            background: linear-gradient(to right, #007bff, #0069d9) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container main-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="logo">
+                <i class="fas fa-hands"></i> RSL
+            </div>
+            <h1>Text to Rwanda Sign Language Translator</h1>
+            <p class="lead">Bridging communication gaps through sign language technology</p>
+        </div>
+
+        <div class="container-fluid mt-4">
+            <div class="row">
+                <!-- Left Column: Input & Controls -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h4><i class="fas fa-keyboard"></i> Enter Text for Translation</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="textInput" class="form-label fw-bold">Enter English Text:</label>
+                                <textarea class="form-control" id="textInput" rows="4" 
+                                          placeholder="Type or paste text here. Example: 'Hello, my name is...'"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Translation Options:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoPlay" checked>
+                                    <label class="form-check-label" for="autoPlay">
+                                        Auto-play sequence
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="showMissing" checked>
+                                    <label class="form-check-label" for="showMissing">
+                                        Highlight missing signs
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="speedControl" class="form-label fw-bold">
+                                    <i class="fas fa-tachometer-alt"></i> Playback Speed: 
+                                    <span id="speedValue" class="badge bg-primary">1.0x</span>
+                                </label>
+                                <input type="range" class="form-range" id="speedControl" min="0.5" max="2" step="0.1" value="1">
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button id="translateBtn" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-hands"></i> Translate to RSL
+                                </button>
+                                <button id="clearBtn" class="btn btn-outline-secondary">
+                                    <i class="fas fa-broom"></i> Clear All
+                                </button>
+                                <a href="/admin" class="btn btn-outline-info">
+                                    <i class="fas fa-cog"></i> Admin Panel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Phrases -->
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h4><i class="fas fa-bolt"></i> Quick Phrases</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2" id="quickPhrasesContainer">
+                                <!-- Quick phrases will be loaded here -->
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="hello">
+                                    Hello
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="thank you">
+                                    Thank You
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="good morning">
+                                    Good Morning
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="how are you">
+                                    How Are You
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="my name is">
+                                    My Name Is
+                                </button>
+                                <button class="btn btn-outline-primary quick-phrase" data-phrase="i need help">
+                                    I Need Help
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Available Signs -->
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h4><i class="fas fa-list"></i> Available RSL Signs</h4>
+                            <small class="text-white-50">Click any sign to add it to the text</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="searchSigns" placeholder="Search signs...">
+                            </div>
+                            <div id="availableSigns" class="d-flex flex-wrap">
+                                <!-- Signs will be loaded here -->
+                                <div class="w-100 text-center py-3">
+                                    <div class="loading-spinner"></div>
+                                    <p class="mt-2 text-muted">Loading available signs...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Video Player & Translation -->
+                <div class="col-lg-8">
+                    <!-- Video Player Section -->
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4><i class="fas fa-video"></i> RSL Video Player</h4>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <h3 id="currentWord" class="text-success">Ready for translation...</h3>
+                            </div>
+                            
+                            <div class="video-container">
+                                <video id="videoPlayer" controls class="w-100" style="max-height: 400px;">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div id="videoDebug" class="video-debug">
+                                    <div>Format: <span id="videoFormat">Unknown</span></div>
+                                    <div>Status: <span id="videoStatus">Idle</span></div>
+                                    <div>Error: <span id="videoError">None</span></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Playback Controls -->
+                            <div class="my-4">
+                                <button id="prevBtn" class="btn btn-outline-primary control-btn">
+                                    <i class="fas fa-step-backward"></i>
+                                </button>
+                                <button id="playPauseBtn" class="btn btn-success control-btn">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button id="nextBtn" class="btn btn-outline-primary control-btn">
+                                    <i class="fas fa-step-forward"></i>
+                                </button>
+                                <button id="repeatBtn" class="btn btn-warning control-btn">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Progress -->
+                            <div class="progress-container">
+                                <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+                            </div>
+                            <p class="mt-2">
+                                Sign <span id="currentIndex" class="fw-bold">0</span> 
+                                of <span id="totalSigns" class="fw-bold">0</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Translation Sequence -->
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h4><i class="fas fa-project-diagram"></i> Sign Sequence</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="sequenceDisplay" class="d-flex flex-wrap justify-content-center">
+                                <!-- Sequence will appear here -->
+                                <div class="text-center w-100 py-4">
+                                    <i class="fas fa-hands fa-2x text-muted"></i>
+                                    <p class="mt-2 text-muted">No translation yet. Enter text and click Translate.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Translation Details -->
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5><i class="fas fa-info-circle"></i> Translation Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Original Text:</strong><br>
+                                    <span id="originalText" class="text-muted">-</span></p>
+                                    
+                                    <p><strong>Translation Type:</strong><br>
+                                    <span id="translationType" class="badge bg-info">-</span></p>
+                                    
+                                    <p><strong>Matched Signs:</strong>
+                                    <span id="matchedCount" class="badge bg-success">0</span></p>
+                                    
+                                    <p><strong>Missing Signs:</strong>
+                                    <span id="missingCount" class="badge bg-danger">0</span></p>
+                                    
+                                    <p><strong>Database Info:</strong><br>
+                                    <span id="databaseInfo" class="text-muted small">Loading...</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5><i class="fas fa-lightbulb"></i> Tips</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success"></i> Click any sign to play it directly</li>
+                                        <li><i class="fas fa-check text-success"></i> Adjust speed for learning purposes</li>
+                                        <li><i class="fas fa-check text-success"></i> Use quick phrases for common expressions</li>
+                                        <li><i class="fas fa-check text-success"></i> Missing signs are highlighted in red</li>
+                                        <li><i class="fas fa-check text-success"></i> Current sign has a pulsing animation</li>
+                                        <li><i class="fas fa-check text-success"></i> Click on available signs to add them to text</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-hands"></i> RSL</h5>
+                    <p>Text to Rwanda Sign Language Translator</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Features</h5>
+                    <p>Real-time Translation • Video Playback • Learning Tools</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Technology</h5>
+                    <p>Flask Backend • Bootstrap Frontend • JavaScript</p>
+                </div>
+            </div>
+            <hr style="background: white;">
+            <p class="mb-0">© 2024 RSL Project. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        // Application state
+        let currentTranslation = null;
+        let currentIndex = 0;
+        let isPlaying = false;
+        let playbackSpeed = 1.0;
+        let availableSigns = [];
+        let availablePhrases = [];
+        let videoSequence = [];
+        let database = {
+            words: {
+                "hello": "hello.mp4",
+                "please": "please.mp4",
+                "yes": "yes.mp4",
+                "no": "no.mp4",
+                "water": "water.mp4",
+                "food": "food.mp4",
+                "help": "help.mp4",
+                "name": "name.mp4",
+                "how": "how.mp4",
+                "you": "you.mp4",
+                "i": "i.mp4",
+                "good": "qw.mp4",
+                "morning": "morning.mp4",
+                "my": "my.mp4",
+                "what": "what.mp4",
+                "evening": "evening.mp4",
+                "b": "camera_b_20251228_135646_d0add5a2.webm",
+                "a": "camera_a_20251228_141022_5a9dbd75.webm",
+                "thank you": "thank_you.mp4",
+                "yego": "camera_yego_20251228_151045_ce73ba6c.webm",
+                "c": "camera_c_20251228_155903_a532f1b4.webm",
+                "njyewe ndagushaka": "camera_njyewe_ndagushaka_20251228_170828_619b50aa.webm",
+                "ibiryo": "camera_ibiryo_20251228_171801_90313d83.webm"
+            },
+            phrases: {
+                "good morning": ["good", "morning"],
+                "thank you very much": ["thank", "you", "very", "much"],
+                "my name is": ["my", "name", "is"],
+                "how are you": ["how", "are", "you"],
+                "njyewe ndagushaka": ["njyewe", "ndagushaka"]
+            },
+            metadata: {
+                last_updated: "2025-12-28T17:18:01.972335"
+            }
+        };
+        
+        // DOM Elements
+        const textInput = document.getElementById('textInput');
+        const translateBtn = document.getElementById('translateBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const currentWord = document.getElementById('currentWord');
+        const progressBar = document.getElementById('progressBar');
+        const currentIndexSpan = document.getElementById('currentIndex');
+        const totalSignsSpan = document.getElementById('totalSigns');
+        const sequenceDisplay = document.getElementById('sequenceDisplay');
+        const originalText = document.getElementById('originalText');
+        const translationType = document.getElementById('translationType');
+        const matchedCount = document.getElementById('matchedCount');
+        const missingCount = document.getElementById('missingCount');
+        const databaseInfo = document.getElementById('databaseInfo');
+        const availableSignsContainer = document.getElementById('availableSigns');
+        const quickPhrasesContainer = document.getElementById('quickPhrasesContainer');
+        const searchSigns = document.getElementById('searchSigns');
+        const speedControl = document.getElementById('speedControl');
+        const speedValue = document.getElementById('speedValue');
+        const autoPlay = document.getElementById('autoPlay');
+        const showMissing = document.getElementById('showMissing');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const repeatBtn = document.getElementById('repeatBtn');
+        
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApplication();
+        });
+        
+        function initializeApplication() {
+            // Initialize from database
+            initializeFromDatabase();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Setup video player events
+            setupVideoPlayer();
+            
+            // Load quick phrases
+            loadQuickPhrases();
+            
+            // Update database info
+            updateDatabaseInfo();
+            
+            // Setup video debugging
+            setupVideoDebug();
+            
+            // Test video support
+            setTimeout(testBrowserVideoSupport, 1000);
+        }
+        
+        function initializeFromDatabase() {
+            // Extract words and phrases from database
+            availableSigns = Object.keys(database.words);
+            availablePhrases = Object.keys(database.phrases);
+            
+            // Display available signs
+            displayAvailableSigns(availableSigns);
+        }
+        
+        function setupEventListeners() {
+            // Translate button
+            translateBtn.addEventListener('click', translateText);
+            
+            // Clear button
+            clearBtn.addEventListener('click', clearAll);
+            
+            // Speed control
+            speedControl.addEventListener('input', function() {
+                playbackSpeed = parseFloat(this.value);
+                speedValue.textContent = `${playbackSpeed.toFixed(1)}x`;
+                if (videoPlayer.src) {
+                    videoPlayer.playbackRate = playbackSpeed;
+                }
+            });
+            
+            // Search signs
+            let searchTimeout;
+            searchSigns.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    filterAvailableSigns(this.value);
+                }, 300);
+            });
+            
+            // Control buttons
+            prevBtn.addEventListener('click', playPrevious);
+            nextBtn.addEventListener('click', playNext);
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            repeatBtn.addEventListener('click', repeatCurrent);
+            
+            // Auto-play next video when current ends
+            videoPlayer.addEventListener('ended', function() {
+                if (autoPlay.checked && currentIndex < videoSequence.length - 1) {
+                    playNext();
+                } else {
+                    isPlaying = false;
+                    updatePlayPauseButton();
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + Enter to translate
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    translateText();
+                }
+                
+                // Space to play/pause
+                if (e.key === ' ' && !e.target.matches('textarea, input')) {
+                    e.preventDefault();
+                    togglePlayPause();
+                }
+                
+                // Arrow keys for navigation
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    playPrevious();
+                }
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    playNext();
+                }
+            });
+        }
+        
+        function setupVideoPlayer() {
+            videoPlayer.addEventListener('play', function() {
+                isPlaying = true;
+                updatePlayPauseButton();
+            });
+            
+            videoPlayer.addEventListener('pause', function() {
+                isPlaying = false;
+                updatePlayPauseButton();
+            });
+            
+            videoPlayer.addEventListener('timeupdate', function() {
+                if (videoPlayer.duration > 0) {
+                    const progress = (videoPlayer.currentTime / videoPlayer.duration) * 100;
+                    progressBar.style.width = `${progress}%`;
+                }
+            });
+        }
+        
+        function setupVideoDebug() {
+            const debugDiv = document.getElementById('videoDebug');
+            const formatSpan = document.getElementById('videoFormat');
+            const statusSpan = document.getElementById('videoStatus');
+            const errorSpan = document.getElementById('videoError');
+            
+            if (!debugDiv) return;
+            
+            // Show debug info on hover
+            const videoContainer = document.querySelector('.video-container');
+            videoContainer.addEventListener('mouseenter', () => {
+                debugDiv.style.display = 'block';
+            });
+            
+            videoContainer.addEventListener('mouseleave', () => {
+                debugDiv.style.display = 'none';
+            });
+            
+            // Update debug info
+            videoPlayer.addEventListener('loadstart', () => {
+                statusSpan.textContent = 'Loading...';
+                const src = videoPlayer.src;
+                formatSpan.textContent = src.split('.').pop().toUpperCase();
+                errorSpan.textContent = 'None';
+            });
+            
+            videoPlayer.addEventListener('loadeddata', () => {
+                statusSpan.textContent = 'Loaded';
+            });
+            
+            videoPlayer.addEventListener('playing', () => {
+                statusSpan.textContent = 'Playing';
+            });
+            
+            videoPlayer.addEventListener('error', () => {
+                statusSpan.textContent = 'Error';
+                errorSpan.textContent = videoPlayer.error?.message || 'Unknown';
+            });
+        }
+        
+        function updatePlayPauseButton() {
+            const icon = playPauseBtn.querySelector('i');
+            if (isPlaying) {
+                icon.className = 'fas fa-pause';
+                playPauseBtn.classList.remove('btn-success');
+                playPauseBtn.classList.add('btn-warning');
+            } else {
+                icon.className = 'fas fa-play';
+                playPauseBtn.classList.remove('btn-warning');
+                playPauseBtn.classList.add('btn-success');
+            }
+        }
+        
+        function displayAvailableSigns(signs) {
+            availableSignsContainer.innerHTML = '';
+            
+            if (signs.length === 0) {
+                availableSignsContainer.innerHTML = `
+                    <div class="w-100 text-center py-3">
+                        <i class="fas fa-info-circle text-muted fa-2x"></i>
+                        <p class="mt-2 text-muted">No signs available yet.</p>
+                        <a href="/admin" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-upload"></i> Upload Signs
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            signs.forEach(sign => {
+                const badge = document.createElement('span');
+                badge.className = 'sign-badge badge bg-primary m-1';
+                badge.textContent = sign;
+                badge.title = `Click to add "${sign}" to text`;
+                badge.style.cursor = 'pointer';
+                
+                badge.addEventListener('click', () => {
+                    addWordToText(sign);
+                });
+                
+                availableSignsContainer.appendChild(badge);
+            });
+        }
+        
+        function filterAvailableSigns(searchTerm) {
+            if (!searchTerm.trim()) {
+                displayAvailableSigns(availableSigns);
+                return;
+            }
+            
+            const filtered = availableSigns.filter(sign => 
+                sign.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            displayAvailableSigns(filtered);
+        }
+        
+        function loadQuickPhrases() {
+            quickPhrasesContainer.innerHTML = '';
+            
+            // Load phrases from database
+            availablePhrases.forEach(phrase => {
+                const button = document.createElement('button');
+                button.className = 'btn btn-outline-primary quick-phrase';
+                button.dataset.phrase = phrase;
+                button.textContent = phrase.charAt(0).toUpperCase() + phrase.slice(1);
+                
+                button.addEventListener('click', function() {
+                    addPhraseToText(phrase);
+                });
+                
+                quickPhrasesContainer.appendChild(button);
+            });
+            
+            // Also add single words that are commonly used
+            const commonWords = ['hello', 'please', 'thank you', 'yes', 'no', 'help'];
+            commonWords.forEach(word => {
+                if (!availablePhrases.includes(word) && database.words[word]) {
+                    const button = document.createElement('button');
+                    button.className = 'btn btn-outline-success quick-phrase mt-1';
+                    button.dataset.phrase = word;
+                    button.textContent = word.charAt(0).toUpperCase() + word.slice(1);
+                    
+                    button.addEventListener('click', function() {
+                        addWordToText(word);
+                    });
+                    
+                    quickPhrasesContainer.appendChild(button);
+                }
+            });
+        }
+        
+        function addWordToText(word) {
+            const textarea = textInput;
+            const currentText = textarea.value.trim();
+            
+            if (currentText) {
+                textarea.value = currentText + ' ' + word;
+            } else {
+                textarea.value = word;
+            }
+            
+            textarea.focus();
+            
+            // Show feedback
+            showToast(`Added "${word}" to text`, 'success');
+        }
+        
+        function addPhraseToText(phrase) {
+            const textarea = textInput;
+            const currentText = textarea.value.trim();
+            
+            if (currentText) {
+                textarea.value = currentText + ' ' + phrase;
+            } else {
+                textarea.value = phrase;
+            }
+            
+            textarea.focus();
+            
+            // Show feedback
+            showToast(`Added phrase "${phrase}" to text`, 'success');
+        }
+        
+        function updateDatabaseInfo() {
+            const wordCount = Object.keys(database.words).length;
+            const phraseCount = Object.keys(database.phrases).length;
+            const videoCount = wordCount; // Each word has a video
+            
+            databaseInfo.textContent = 
+                `${wordCount} signs, ${phraseCount} phrases, ${videoCount} videos`;
+        }
+        
+        async function translateText() {
+            const text = textInput.value.trim();
+            
+            if (!text) {
+                showToast('Please enter some text to translate', 'error');
+                textInput.focus();
+                return;
+            }
+            
+            // Show loading state
+            translateBtn.innerHTML = '<span class="loading-spinner"></span> Translating...';
+            translateBtn.disabled = true;
+            
+            try {
+                // Process translation locally
+                const translationResult = processTextTranslation(text);
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    processTranslation(translationResult);
+                    showToast('Translation successful!', 'success');
+                    
+                    // Reset button state
+                    translateBtn.innerHTML = '<i class="fas fa-hands"></i> Translate to RSL';
+                    translateBtn.disabled = false;
+                }, 500);
+                
+            } catch (error) {
+                console.error('Translation error:', error);
+                showToast(`Translation error: ${error.message}`, 'error');
+                
+                // Reset button state
+                translateBtn.innerHTML = '<i class="fas fa-hands"></i> Translate to RSL';
+                translateBtn.disabled = false;
+            }
+        }
+        
+        function processTextTranslation(text) {
+            const lowerText = text.toLowerCase();
+            
+            let videoSequence = [];
+            let translationType = 'word-by-word';
+            const textWords = lowerText.split(/\s+/).filter(w => w);
+            
+            // First, check for exact multi-word phrases in the database
+            // Check for the entire phrase first
+            if (database.words[lowerText]) {
+                // The entire text is a known phrase/word
+                const filename = database.words[lowerText];
+                videoSequence.push({
+                    word: lowerText,
+                    original: lowerText,
+                    has_video: true,
+                    video_url: getVideoUrl(filename),
+                    video_filename: filename,
+                    type: 'full-phrase'
+                });
+                
+                translationType = 'phrase';
+                
+                return {
+                    original_text: text,
+                    video_sequence: videoSequence,
+                    translation_type: translationType,
+                    matched_count: 1,
+                    missing_count: 0,
+                    total_words: 1,
+                    success: true
+                };
+            }
+            
+            // Check for multi-word phrases in the database
+            let phraseFound = false;
+            
+            // Try 4-word phrases
+            for (let i = 0; i <= textWords.length - 4; i++) {
+                const phrase4 = textWords.slice(i, i + 4).join(' ');
+                if (database.phrases[phrase4]) {
+                    const phraseWords = database.phrases[phrase4];
+                    phraseWords.forEach(phraseWord => {
+                        const filename = database.words[phraseWord];
+                        videoSequence.push({
+                            word: phraseWord,
+                            original: phraseWord,
+                            has_video: filename ? true : false,
+                            video_url: filename ? getVideoUrl(filename) : null,
+                            video_filename: filename,
+                            type: 'phrase-part'
+                        });
+                    });
+                    i += 3; // Skip the next 3 words since we processed them
+                    phraseFound = true;
+                    translationType = 'phrase';
+                }
+            }
+            
+            // Try 3-word phrases (excluding those already processed)
+            for (let i = 0; i <= textWords.length - 3; i++) {
+                // Skip if this word was part of a 4-word phrase
+                if (videoSequence.some(item => item.original === textWords[i])) continue;
+                
+                const phrase3 = textWords.slice(i, i + 3).join(' ');
+                if (database.phrases[phrase3]) {
+                    const phraseWords = database.phrases[phrase3];
+                    phraseWords.forEach(phraseWord => {
+                        const filename = database.words[phraseWord];
+                        videoSequence.push({
+                            word: phraseWord,
+                            original: phraseWord,
+                            has_video: filename ? true : false,
+                            video_url: filename ? getVideoUrl(filename) : null,
+                            video_filename: filename,
+                            type: 'phrase-part'
+                        });
+                    });
+                    i += 2;
+                    phraseFound = true;
+                    translationType = 'phrase';
+                }
+            }
+            
+            // Try 2-word phrases (excluding those already processed)
+            for (let i = 0; i <= textWords.length - 2; i++) {
+                // Skip if this word was part of a longer phrase
+                if (videoSequence.some(item => item.original === textWords[i])) continue;
+                
+                const phrase2 = textWords.slice(i, i + 2).join(' ');
+                if (database.phrases[phrase2]) {
+                    const phraseWords = database.phrases[phrase2];
+                    phraseWords.forEach(phraseWord => {
+                        const filename = database.words[phraseWord];
+                        videoSequence.push({
+                            word: phraseWord,
+                            original: phraseWord,
+                            has_video: filename ? true : false,
+                            video_url: filename ? getVideoUrl(filename) : null,
+                            video_filename: filename,
+                            type: 'phrase-part'
+                        });
+                    });
+                    i += 1;
+                    phraseFound = true;
+                    translationType = 'phrase';
+                }
+            }
+            
+            // Process remaining single words
+            for (let i = 0; i < textWords.length; i++) {
+                // Skip if this word was part of a phrase
+                if (videoSequence.some(item => item.original === textWords[i])) continue;
+                
+                const word = textWords[i];
+                const filename = database.words[word];
+                const hasVideo = filename ? true : false;
+                videoSequence.push({
+                    word: word,
+                    original: word,
+                    has_video: hasVideo,
+                    video_url: hasVideo ? getVideoUrl(filename) : null,
+                    video_filename: filename,
+                    type: 'single-word'
+                });
+            }
+            
+            // Count statistics
+            const matched = videoSequence.filter(v => v.has_video).length;
+            const missing = videoSequence.filter(v => !v.has_video).length;
+            
+            return {
+                original_text: text,
+                video_sequence: videoSequence,
+                translation_type: translationType,
+                matched_count: matched,
+                missing_count: missing,
+                total_words: textWords.length,
+                success: true
+            };
+        }
+        
+        function getVideoUrl(filename) {
+            if (!filename) return null;
+            
+            // Check if it's already a full URL
+            if (filename.startsWith('http://') || filename.startsWith('https://') || filename.startsWith('/')) {
+                return filename;
+            }
+            
+            // Add the videos path
+            return `/videos/${encodeURIComponent(filename)}`;
+        }
+        
+        function processTranslation(data) {
+            // Store current translation
+            currentTranslation = data;
+            videoSequence = data.video_sequence || [];
+            currentIndex = 0;
+            
+            // Update translation details
+            originalText.textContent = data.original_text;
+            translationType.textContent = data.translation_type;
+            
+            matchedCount.textContent = data.matched_count;
+            missingCount.textContent = data.missing_count;
+            
+            // Display sequence
+            displaySequence(videoSequence);
+            
+            // Update progress
+            totalSignsSpan.textContent = videoSequence.length;
+            
+            // Play first video if available
+            const firstVideo = videoSequence.find(v => v.has_video);
+            if (firstVideo && autoPlay.checked) {
+                playVideo(firstVideo, 0);
+            } else if (firstVideo) {
+                // Just update display without playing
+                updateVideoDisplay(firstVideo, 0);
+            } else {
+                currentWord.textContent = 'No videos available for translation';
+                videoPlayer.src = '';
+                currentIndexSpan.textContent = '0';
+                progressBar.style.width = '0%';
+            }
+            
+            // Enable/disable navigation buttons
+            updateNavigationButtons();
+        }
+        
+        function displaySequence(sequence) {
+            sequenceDisplay.innerHTML = '';
+            
+            if (sequence.length === 0) {
+                sequenceDisplay.innerHTML = `
+                    <div class="text-center w-100 py-4">
+                        <i class="fas fa-exclamation-triangle text-warning fa-2x"></i>
+                        <p class="mt-2 text-muted">No signs found for translation.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            sequence.forEach((item, index) => {
+                const badge = document.createElement('span');
+                let badgeClass = 'bg-primary';
+                
+                // Color code based on type and availability
+                if (!item.has_video) {
+                    badgeClass = 'bg-danger';
+                } else if (item.type === 'phrase-part') {
+                    badgeClass = 'bg-info';
+                } else if (item.type === 'single-word') {
+                    badgeClass = 'bg-success';
+                } else if (item.type === 'full-phrase') {
+                    badgeClass = 'bg-warning';
+                }
+                
+                badge.className = `sign-badge badge m-1 ${badgeClass}`;
+                badge.textContent = item.word;
+                badge.dataset.videoUrl = item.video_url || '';
+                badge.dataset.filename = item.video_filename || '';
+                
+                if (item.has_video) {
+                    badge.style.cursor = 'pointer';
+                    badge.title = `Play "${item.word}" sign\nVideo: ${item.video_filename || 'Unknown'}`;
+                    badge.addEventListener('click', () => {
+                        console.log('Playing video:', {
+                            word: item.word,
+                            url: item.video_url,
+                            filename: item.video_filename
+                        });
+                        playVideo(item, index);
+                    });
+                } else {
+                    badge.title = `No video available for "${item.word}"`;
+                }
+                
+                sequenceDisplay.appendChild(badge);
+            });
+            
+            // Highlight first available sign
+            const firstAvailable = sequence.findIndex(v => v.has_video);
+            if (firstAvailable >= 0) {
+                const badges = sequenceDisplay.querySelectorAll('.sign-badge');
+                if (badges[firstAvailable]) {
+                    badges[firstAvailable].classList.add('active');
+                }
+            }
+        }
+        
+        function playVideo(videoItem, index) {
+            if (!videoItem || !videoItem.has_video) {
+                showToast(`No video available for "${videoItem?.word}"`, 'warning');
+                return;
+            }
+            
+            // Update current index
+            currentIndex = index;
+            currentIndexSpan.textContent = index + 1;
+            
+            // Update video source with proper MIME type
+            const videoUrl = videoItem.video_url;
+            videoPlayer.src = videoUrl;
+            videoPlayer.playbackRate = playbackSpeed;
+            
+            // Set appropriate MIME type based on file extension
+            const videoFilename = videoItem.video_filename || '';
+            if (videoFilename.endsWith('.webm')) {
+                videoPlayer.type = 'video/webm; codecs="vp8, vorbis"';
+            } else if (videoFilename.endsWith('.mp4')) {
+                videoPlayer.type = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+            }
+            
+            // Update current word display
+            currentWord.textContent = videoItem.word;
+            
+            // Clear any previous error
+            videoPlayer.onerror = null;
+            videoPlayer.onloadeddata = null;
+            
+            // Set up event handlers
+            videoPlayer.onloadeddata = function() {
+                console.log('Video loaded successfully:', videoUrl);
+            };
+            
+            videoPlayer.onerror = function() {
+                console.error('Video playback error:', {
+                    error: videoPlayer.error,
+                    src: videoPlayer.src,
+                    networkState: videoPlayer.networkState,
+                    readyState: videoPlayer.readyState
+                });
+                
+                let errorMsg = 'Could not play video: ';
+                switch(videoPlayer.error?.code) {
+                    case 1:
+                        errorMsg += 'Video loading aborted';
+                        break;
+                    case 2:
+                        errorMsg += 'Network error';
+                        break;
+                    case 3:
+                        errorMsg += 'Video decoding error';
+                        break;
+                    case 4:
+                        errorMsg += 'Video not supported';
+                        break;
+                    default:
+                        errorMsg += 'Unknown error';
+                }
+                
+                showToast(errorMsg, 'error');
+                
+                // Try alternative approach - check if file exists
+                checkVideoFileExists(videoUrl, videoItem.word);
+            };
+            
+            // Play the video
+            if (autoPlay.checked) {
+                const playPromise = videoPlayer.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        console.error('Playback error:', e);
+                        showToast('Could not play video. Please try again.', 'error');
+                    });
+                }
+            }
+            
+            // Update progress
+            const progress = ((index + 1) / videoSequence.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Highlight current sign in sequence
+            const badges = sequenceDisplay.querySelectorAll('.sign-badge');
+            badges.forEach((badge, i) => {
+                badge.classList.remove('active');
+                if (i === index) {
+                    badge.classList.add('active');
+                }
+            });
+            
+            // Update navigation buttons
+            updateNavigationButtons();
+        }
+        
+        function checkVideoFileExists(url, word) {
+            fetch(url, { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        console.log(`Video file exists: ${url}`);
+                        showToast(`Video file exists but cannot be played. Format may not be supported.`, 'warning');
+                    } else {
+                        console.error(`Video file not found (${response.status}): ${url}`);
+                        showToast(`Video file not found for "${word}"`, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Cannot check video file:', error);
+                    showToast(`Cannot access video file for "${word}"`, 'error');
+                });
+        }
+        
+        function updateVideoDisplay(videoItem, index) {
+            if (!videoItem || !videoItem.has_video) return;
+            
+            currentIndex = index;
+            currentIndexSpan.textContent = index + 1;
+            currentWord.textContent = videoItem.word;
+            
+            const progress = ((index + 1) / videoSequence.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            const badges = sequenceDisplay.querySelectorAll('.sign-badge');
+            badges.forEach((badge, i) => {
+                badge.classList.remove('active');
+                if (i === index) {
+                    badge.classList.add('active');
+                }
+            });
+            
+            updateNavigationButtons();
+        }
+        
+        function playPrevious() {
+            if (videoSequence.length === 0) return;
+            
+            // Find previous available video
+            let prevIndex = currentIndex - 1;
+            while (prevIndex >= 0) {
+                if (videoSequence[prevIndex].has_video) {
+                    playVideo(videoSequence[prevIndex], prevIndex);
+                    return;
+                }
+                prevIndex--;
+            }
+            
+            showToast('No previous sign available', 'info');
+        }
+        
+        function playNext() {
+            if (videoSequence.length === 0) return;
+            
+            // Find next available video
+            let nextIndex = currentIndex + 1;
+            while (nextIndex < videoSequence.length) {
+                if (videoSequence[nextIndex].has_video) {
+                    playVideo(videoSequence[nextIndex], nextIndex);
+                    return;
+                }
+                nextIndex++;
+            }
+            
+            showToast('No next sign available', 'info');
+        }
+        
+        function togglePlayPause() {
+            if (!videoPlayer.src) return;
+            
+            if (videoPlayer.paused) {
+                videoPlayer.play().catch(e => {
+                    console.error('Playback error:', e);
+                    showToast('Could not play video', 'error');
+                });
+            } else {
+                videoPlayer.pause();
+            }
+        }
+        
+        function repeatCurrent() {
+            if (!videoPlayer.src) return;
+            
+            videoPlayer.currentTime = 0;
+            if (videoPlayer.paused) {
+                videoPlayer.play().catch(e => {
+                    console.error('Playback error:', e);
+                });
+            }
+            
+            showToast('Repeating current sign', 'info');
+        }
+        
+        function updateNavigationButtons() {
+            // Previous button
+            const hasPrevious = videoSequence.slice(0, currentIndex).some(v => v.has_video);
+            prevBtn.disabled = !hasPrevious;
+            prevBtn.title = hasPrevious ? 'Previous sign' : 'No previous sign';
+            
+            // Next button
+            const hasNext = videoSequence.slice(currentIndex + 1).some(v => v.has_video);
+            nextBtn.disabled = !hasNext;
+            nextBtn.title = hasNext ? 'Next sign' : 'No next sign';
+            
+            // Play/Pause button
+            playPauseBtn.disabled = !videoPlayer.src;
+            
+            // Repeat button
+            repeatBtn.disabled = !videoPlayer.src;
+        }
+        
+        function clearAll() {
+            // Clear text input
+            textInput.value = '';
+            
+            // Clear translation display
+            currentTranslation = null;
+            videoSequence = [];
+            currentIndex = 0;
+            
+            // Reset video player
+            videoPlayer.src = '';
+            currentWord.textContent = 'Ready for translation...';
+            currentIndexSpan.textContent = '0';
+            totalSignsSpan.textContent = '0';
+            progressBar.style.width = '0%';
+            
+            // Clear sequence display
+            sequenceDisplay.innerHTML = `
+                <div class="text-center w-100 py-4">
+                    <i class="fas fa-hands fa-2x text-muted"></i>
+                    <p class="mt-2 text-muted">No translation yet. Enter text and click Translate.</p>
+                </div>
+            `;
+            
+            // Clear translation details
+            originalText.textContent = '-';
+            translationType.textContent = '-';
+            matchedCount.textContent = '0';
+            missingCount.textContent = '0';
+            
+            // Reset navigation buttons
+            updateNavigationButtons();
+            isPlaying = false;
+            updatePlayPauseButton();
+            
+            // Focus on text input
+            textInput.focus();
+            
+            showToast('All cleared', 'info');
+        }
+        
+        function testBrowserVideoSupport() {
+            const video = document.createElement('video');
+            const support = {
+                webm: video.canPlayType('video/webm; codecs="vp8, vorbis"'),
+                webm_vp9: video.canPlayType('video/webm; codecs="vp9"'),
+                mp4: video.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"'),
+                ogg: video.canPlayType('video/ogg; codecs="theora"')
+            };
+            
+            console.log('Browser video support:', support);
+            
+            // Show warning if webm not supported
+            if (support.webm === '' && support.webm_vp9 === '') {
+                console.warn('Browser does not support WebM format');
+                showToast('Your browser may not support WebM video format. Some videos may not play.', 'warning');
+            }
+        }
+        
+        function showToast(message, type = 'info') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast-container');
+            existingToasts.forEach(toast => toast.remove());
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            
+            // Add to container
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '1050';
+            container.appendChild(toast);
+            document.body.appendChild(container);
+            
+            // Initialize and show toast
+            const bsToast = new bootstrap.Toast(toast, { 
+                delay: type === 'error' ? 5000 : 3000 
+            });
+            bsToast.show();
+            
+            // Remove after hiding
+            toast.addEventListener('hidden.bs.toast', function () {
+                container.remove();
+            });
+        }
+        
+        // Expose functions to global scope for HTML onclick handlers
+        window.addWordToText = addWordToText;
+        window.addPhraseToText = addPhraseToText;
+        window.translateText = translateText;
+        window.clearAll = clearAll;
+        window.loadAvailableSigns = loadAvailableSigns;
+    </script>
+</body>
+</html>

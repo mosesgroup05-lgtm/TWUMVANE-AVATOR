@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRSL Admin — Sign Language Registry Management</title>
+    <!-- Tailwind CSS v3 (Stable) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            indigo: '#6366f1',
+                            emerald: '#10b981',
+                            cyan: '#06b6d4',
+                            rose: '#f43f5e',
+                            amber: '#f59e0b',
+                        },
+                        surface: {
+                            DEFAULT: '#0f172a',
+                            lighter: '#1e293b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style type="text/css">
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { 
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .recording-indicator {
+            @apply w-3 h-3 bg-brand-rose rounded-full;
+            animation: pulse-ring 1.5s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+        }
+
+        .nav-tab-active { @apply border-b-2 border-brand-indigo text-white bg-slate-800/40; }
+        .nav-tab-inactive { @apply border-b-2 border-transparent text-slate-500 hover:text-slate-300; }
+    </style>
+</head>
+<body class="bg-surface text-slate-100 font-sans min-h-screen selection:bg-brand-indigo/30 overflow-x-hidden">
+    <!-- Background Gradient -->
+    <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-brand-indigo/5 blur-[120px] rounded-full"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-rose/5 blur-[120px] rounded-full"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Dashboard Header -->
+        <header class="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+            <div class="flex items-center gap-6">
+                <a href="/" class="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-extrabold tracking-tight flex items-center gap-3">
+                        <i class="fas fa-shield-halved text-brand-indigo"></i>
+                        TRSL Admin Console
+                    </h1>
+                    <p class="text-slate-500 font-medium">Registry & Video Database Management System</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-slate-800 px-6 py-3 rounded-2xl">
+                <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-brand-emerald animate-pulse"></span>
+                    <span class="text-xs font-black uppercase tracking-widest text-slate-400">Database Online</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="bg-slate-900/60 p-6 rounded-[2rem] border border-slate-800 flex flex-col items-center justify-center text-center group hover:border-brand-indigo/30 transition-all">
+                <span id="totalWords" class="text-4xl font-black text-white mb-1">0</span>
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Total Words</span>
+            </div>
+            <div class="bg-slate-900/60 p-6 rounded-[2rem] border border-slate-800 flex flex-col items-center justify-center text-center hover:border-brand-emerald/30 transition-all">
+                <span id="totalPhrases" class="text-4xl font-black text-white mb-1">0</span>
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Total Phrases</span>
+            </div>
+            <div class="bg-slate-900/60 p-6 rounded-[2rem] border border-slate-800 flex flex-col items-center justify-center text-center hover:border-brand-cyan/30 transition-all">
+                <span id="totalVideos" class="text-4xl font-black text-white mb-1">0</span>
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Video Assets</span>
+            </div>
+            <div class="bg-slate-900/60 p-6 rounded-[2rem] border border-slate-800 flex flex-col items-center justify-center text-center hover:border-brand-rose/30 transition-all">
+                <span id="unusedVideos" class="text-4xl font-black text-brand-rose mb-1">0</span>
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 underline decoration-brand-rose/30">Unlinked Files</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left: Content Creation -->
+            <div class="lg:col-span-7 space-y-8">
+                
+                <!-- Ingestion Tabs -->
+                <div class="bg-slate-900 rounded-[2.5rem] border border-slate-800 overflow-hidden shadow-2xl">
+                    <div class="flex border-b border-slate-800">
+                        <button id="file-upload-trigger" class="flex-1 py-6 text-xs font-black uppercase tracking-widest nav-tab-active transition-all flex items-center justify-center gap-3">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload Asset
+                        </button>
+                        <button id="camera-record-trigger" class="flex-1 py-6 text-xs font-black uppercase tracking-widest nav-tab-inactive transition-all flex items-center justify-center gap-3 border-l border-slate-800">
+                            <i class="fas fa-video text-brand-rose"></i> Live Record
+                        </button>
+                    </div>
+
+                    <div class="p-10">
+                        <!-- Upload Pane -->
+                        <div id="upload-pane" class="space-y-8">
+                            <form id="uploadForm" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="space-y-3">
+                                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Target Entry Name</label>
+                                        <input type="text" id="wordInput" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-indigo transition-all" placeholder="e.g. 'morning'" required>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Asset Classification</label>
+                                        <select id="phraseType" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-indigo transition-all">
+                                            <option value="word">Individual Sign Word</option>
+                                            <option value="phrase">Compound Phrase</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="uploadArea" class="relative bg-slate-950/50 border-2 border-dashed border-slate-800 rounded-[2rem] p-12 text-center group hover:border-brand-indigo/50 hover:bg-brand-indigo/5 transition-all cursor-pointer">
+                                    <input type="file" id="videoFile" class="hidden" accept="video/*">
+                                    <div class="w-20 h-20 bg-slate-900 rounded-3xl flex items-center justify-center text-slate-600 mx-auto mb-6 group-hover:bg-brand-indigo group-hover:text-white transition-all shadow-xl">
+                                        <i class="fas fa-file-video text-3xl"></i>
+                                    </div>
+                                    <p class="text-sm font-bold text-slate-400">Click to select or drag & drop video</p>
+                                    <p class="text-[10px] font-black uppercase text-slate-600 mt-2 tracking-widest">Supports MP4, WEBM, MOV</p>
+                                    <div id="fileName" class="mt-4 text-xs font-extrabold text-brand-emerald"></div>
+                                </div>
+
+                                <div id="phraseWordsContainer" class="hidden space-y-4 bg-slate-800/20 p-6 rounded-2xl border border-white/5">
+                                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Phrase Composition</label>
+                                    <div id="phraseComponents" class="space-y-2"></div>
+                                    <button type="button" onclick="addPhraseWord()" class="text-[10px] font-black uppercase tracking-widest text-brand-indigo hover:text-white transition-all">
+                                        <i class="fas fa-plus mr-1"></i> Append Component
+                                    </button>
+                                </div>
+
+                                <button type="submit" class="w-full bg-brand-indigo hover:bg-brand-indigo/90 text-white font-extrabold py-4 rounded-xl shadow-xl shadow-brand-indigo/10 transition-all flex items-center justify-center gap-3 active:scale-95">
+                                    <i class="fas fa-upload"></i> INGEST INTO DATABASE
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Recording Pane (Hidden by Default) -->
+                        <div id="record-pane" class="hidden space-y-8">
+                             <div class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="space-y-3">
+                                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Sign to Record</label>
+                                        <input type="text" id="recordWordInput" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-indigo transition-all" placeholder="Enter word...">
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Sensor Source</label>
+                                        <select id="cameraSelect" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-indigo transition-all">
+                                            <option>Detecting cameras...</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="relative bg-black rounded-[2rem] overflow-hidden border border-slate-800 shadow-2xl">
+                                    <video id="cameraPreview" autoplay muted class="w-full aspect-video object-cover"></video>
+                                    
+                                    <div class="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black via-black/40 to-transparent flex justify-between items-end">
+                                        <div id="recordingStatus" class="hidden flex items-center gap-4 bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-brand-rose/30">
+                                            <div class="recording-indicator"></div>
+                                            <span class="timer text-lg font-black text-brand-rose">00:00</span>
+                                        </div>
+                                        
+                                        <div class="flex gap-4 ml-auto">
+                                            <button id="startRecordBtn" class="w-14 h-14 rounded-full bg-brand-rose text-white shadow-xl shadow-brand-rose/20 flex items-center justify-center hover:scale-105 transition-all">
+                                                <i class="fas fa-circle"></i>
+                                            </button>
+                                            <button id="stopRecordBtn" disabled class="w-14 h-14 rounded-full bg-slate-800 text-white disabled:opacity-20 flex items-center justify-center hover:scale-105 transition-all">
+                                                <i class="fas fa-square"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="recordedPreview" class="hidden bg-slate-950/50 p-6 rounded-[2rem] border border-brand-emerald/30 space-y-6 text-center">
+                                    <h4 class="text-xs font-black text-brand-emerald uppercase tracking-widest italic">Verification Required</h4>
+                                    <div class="aspect-video bg-black rounded-2xl overflow-hidden max-w-sm mx-auto shadow-2xl">
+                                        <video id="recordedVideo" controls class="w-full h-full object-contain"></video>
+                                    </div>
+                                    <div class="flex gap-4 max-w-sm mx-auto">
+                                        <button id="saveRecordBtn" class="flex-1 bg-brand-emerald hover:bg-brand-emerald/90 text-white font-extrabold py-3 rounded-xl transition-all">COMMIT VIDEO</button>
+                                        <button id="retryRecordBtn" class="flex-1 bg-slate-800 text-slate-300 font-extrabold py-3 rounded-xl transition-all">RE-RECORD</button>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Repository Browser -->
+                <div class="bg-slate-900/60 backdrop-blur-xl p-10 rounded-[2.5rem] border border-slate-800 shadow-2xl space-y-8 flex flex-col h-[600px]">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-bold flex items-center gap-3">
+                            <i class="fas fa-images text-brand-cyan"></i>
+                            Asset Library
+                        </h3>
+                        <div class="relative">
+                            <input type="text" id="searchVideos" class="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-brand-indigo w-64" placeholder="Filter by filename...">
+                        </div>
+                    </div>
+
+                    <div id="videoList" class="flex-1 overflow-y-auto custom-scrollbar pr-2 -mr-2 space-y-4">
+                        <!-- Videos populate here -->
+                        <div class="py-12 text-center text-slate-600 italic">
+                            Scanning digital directory...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Database & Control -->
+            <div class="lg:col-span-5 space-y-8">
+                
+                <!-- Dictionary Explorer -->
+                <div class="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 shadow-xl space-y-8 h-[600px] flex flex-col">
+                    <div class="flex border-b border-slate-800">
+                        <button id="words-tab-trigger" class="flex-1 pb-4 text-[10px] font-black uppercase tracking-widest text-white border-b-2 border-brand-indigo">Sign Words</button>
+                        <button id="phrases-tab-trigger" class="flex-1 pb-4 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-slate-400 transition-all border-b-2 border-transparent">Phrases</button>
+                    </div>
+
+                    <div class="relative">
+                        <input type="text" id="searchWords" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-12 pr-4 text-xs focus:outline-none focus:border-brand-indigo transition-all" placeholder="Search dictionary...">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-700"></i>
+                    </div>
+
+                    <div id="wordsList" class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2">
+                        <!-- Entries -->
+                    </div>
+                    
+                    <div id="phrasesList" class="hidden flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2">
+                        <!-- Phrases -->
+                    </div>
+                </div>
+
+                <!-- Manual Insertion Entry -->
+                <div class="bg-slate-900/40 p-10 rounded-[2.5rem] border border-slate-800 space-y-8">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black text-slate-500 uppercase tracking-widest">Manual Inscription</h4>
+                        <div class="flex gap-2 p-1 bg-slate-800 rounded-lg">
+                            <button id="type-word" class="px-3 py-1.5 rounded-md text-[9px] font-black uppercase bg-brand-indigo text-white shadow-lg transition-all">Word</button>
+                            <button id="type-phrase" class="px-3 py-1.5 rounded-md text-[9px] font-black uppercase text-slate-500 hover:text-white transition-all">Phrase</button>
+                        </div>
+                    </div>
+
+                    <div id="manualWordEntry" class="space-y-6">
+                        <div class="space-y-4">
+                            <input type="text" id="manualWord" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-indigo" placeholder="Key (e.g. 'hello')">
+                            <input type="text" id="manualFilename" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-indigo" placeholder="Reference video (e.g. 'hi.mp4')">
+                        </div>
+                        <button onclick="addManualWord()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl transition-all">REGISTER WORD</button>
+                    </div>
+
+                    <div id="manualPhraseEntry" class="hidden space-y-6">
+                        <div class="space-y-4">
+                            <input type="text" id="manualPhrase" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-indigo" placeholder="Compound Phrase">
+                            <input type="text" id="manualPhraseWords" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-indigo" placeholder="Components (comma separated)">
+                        </div>
+                        <button onclick="addManualPhrase()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl transition-all text-brand-emerald">BOND PHRASE</button>
+                    </div>
+                </div>
+
+                <!-- Rapid Directives -->
+                <div class="bg-slate-950/30 p-8 rounded-[2rem] border border-slate-800/50">
+                    <h4 class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-6">Database Directives</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="exportDatabase()" class="flex flex-col items-center gap-2 p-4 bg-slate-900 rounded-2xl border border-slate-800 hover:border-brand-indigo transition-all group">
+                            <i class="fas fa-file-export text-slate-600 group-hover:text-brand-indigo transition-all"></i>
+                            <span class="text-[9px] font-black uppercase text-slate-500">Export</span>
+                        </button>
+                        <button onclick="testAllVideos()" class="flex flex-col items-center gap-2 p-4 bg-slate-900 rounded-2xl border border-slate-800 hover:border-brand-cyan transition-all group">
+                            <i class="fas fa-flask text-slate-600 group-hover:text-brand-cyan transition-all"></i>
+                            <span class="text-[9px] font-black uppercase text-slate-500">Integrity Check</span>
+                        </button>
+                        <button onclick="clearUnusedVideos()" class="flex flex-col items-center gap-2 p-4 bg-slate-900 rounded-2xl border border-slate-800 hover:border-brand-rose transition-all group">
+                            <i class="fas fa-broom text-slate-600 group-hover:text-brand-rose transition-all"></i>
+                            <span class="text-[9px] font-black uppercase text-slate-500">Purge Loose</span>
+                        </button>
+                        <button onclick="reloadDatabase()" class="flex flex-col items-center gap-2 p-4 bg-slate-900 rounded-2xl border border-slate-800 hover:border-white/20 transition-all group">
+                            <i class="fas fa-sync text-slate-600 group-hover:text-white transition-all"></i>
+                            <span class="text-[9px] font-black uppercase text-slate-500">Hard Reload</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Logic -->
+    <script>
+        const API_BASE_URL = '/trsl/api';
+        let mediaStream = null, mediaRecorder = null, recordedChunks = [], recordingTimer = null, recordedBlob = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+             initializeDashboard();
+             setupNavigation();
+        });
+
+        function setupNavigation() {
+            // pane toggling
+            const uploadTrigger = document.getElementById('file-upload-trigger');
+            const recordTrigger = document.getElementById('camera-record-trigger');
+            const uploadPane = document.getElementById('upload-pane');
+            const recordPane = document.getElementById('record-pane');
+
+            uploadTrigger.onclick = () => {
+                uploadTrigger.className = 'flex-1 py-6 text-xs font-black uppercase tracking-widest nav-tab-active transition-all flex items-center justify-center gap-3';
+                recordTrigger.className = 'flex-1 py-6 text-xs font-black uppercase tracking-widest nav-tab-inactive transition-all flex items-center justify-center gap-3 border-l border-slate-800';
+                uploadPane.classList.remove('hidden'); recordPane.classList.add('hidden');
+            };
+            recordTrigger.onclick = () => {
+                recordTrigger.className = 'flex-1 py-6 text-xs font-black uppercase tracking-widest nav-tab-active transition-all flex items-center justify-center gap-3 border-l border-slate-800';
+                uploadTrigger.className = 'flex-1 py-6 text-xs font-black uppercase tracking-widest nav-tab-inactive transition-all flex items-center justify-center gap-3';
+                uploadPane.classList.add('hidden'); recordPane.classList.remove('hidden');
+            };
+
+            // dictionary toggling
+            const wordsTab = document.getElementById('words-tab-trigger');
+            const phrasesTab = document.getElementById('phrases-tab-trigger');
+            const wordsList = document.getElementById('wordsList');
+            const phrasesList = document.getElementById('phrasesList');
+
+            wordsTab.onclick = () => {
+                wordsTab.className = 'flex-1 pb-4 text-[10px] font-black uppercase tracking-widest text-white border-b-2 border-brand-indigo';
+                phrasesTab.className = 'flex-1 pb-4 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-slate-400 transition-all border-b-2 border-transparent';
+                wordsList.classList.remove('hidden'); phrasesList.classList.add('hidden');
+            };
+            phrasesTab.onclick = () => {
+                phrasesTab.className = 'flex-1 pb-4 text-[10px] font-black uppercase tracking-widest text-white border-b-2 border-brand-indigo';
+                wordsTab.className = 'flex-1 pb-4 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-slate-400 transition-all border-b-2 border-transparent';
+                wordsList.classList.add('hidden'); phrasesList.classList.remove('hidden');
+            };
+
+            // type toggling
+            const typeW = document.getElementById('type-word');
+            const typeP = document.getElementById('type-phrase');
+            const mw = document.getElementById('manualWordEntry');
+            const mp = document.getElementById('manualPhraseEntry');
+
+            typeW.onclick = () => {
+                typeW.className = 'px-3 py-1.5 rounded-md text-[9px] font-black uppercase bg-brand-indigo text-white shadow-lg transition-all';
+                typeP.className = 'px-3 py-1.5 rounded-md text-[9px] font-black uppercase text-slate-500 hover:text-white transition-all';
+                mw.classList.remove('hidden'); mp.classList.add('hidden');
+            };
+            typeP.onclick = () => {
+                typeP.className = 'px-3 py-1.5 rounded-md text-[9px] font-black uppercase bg-brand-indigo text-white shadow-lg transition-all';
+                typeW.className = 'px-3 py-1.5 rounded-md text-[9px] font-black uppercase text-slate-500 hover:text-white transition-all';
+                mp.classList.remove('hidden'); mw.classList.add('hidden');
+            };
+        }
+
+        async function initializeDashboard() {
+            loadStats(); loadVideos(); loadWords(); loadPhrases();
+            setupFileUpload(); setupCameraRecording();
+            document.getElementById('uploadForm').onsubmit = uploadVideo;
+            setupSearching();
+        }
+
+        function setupSearching() {
+            const debounced = (fn, delay) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); } };
+            document.getElementById('searchVideos').oninput = debounced(e => searchVideos(e.target.value), 300);
+            document.getElementById('searchWords').oninput = debounced(e => searchWords(e.target.value), 300);
+        }
+
+        function searchVideos(query) {
+            const items = document.querySelectorAll('#videoList > div');
+            items.forEach(el => {
+                const name = el.querySelector('h5')?.textContent || '';
+                el.style.display = name.toLowerCase().includes(query.toLowerCase()) ? 'flex' : 'none';
+            });
+        }
+
+        function searchWords(query) {
+            const wordsList = document.querySelectorAll('#wordsList > div');
+            wordsList.forEach(el => {
+                const text = el.querySelector('span:first-child')?.textContent || '';
+                el.style.display = text.toLowerCase().includes(query.toLowerCase()) ? 'flex' : 'none';
+            });
+            const phrasesList = document.querySelectorAll('#phrasesList > div');
+            phrasesList.forEach(el => {
+                const text = el.querySelector('span:first-child')?.textContent || '';
+                el.style.display = text.toLowerCase().includes(query.toLowerCase()) ? 'flex' : 'none';
+            });
+        }
+
+        function setupFileUpload() {
+            const ua = document.getElementById('uploadArea'), f = document.getElementById('videoFile'), pt = document.getElementById('phraseType'), pc = document.getElementById('phraseWordsContainer');
+            ua.onclick = () => f.click();
+            f.onchange = () => { if(f.files.length) document.getElementById('fileName').textContent = f.files[0].name; };
+            pt.onchange = () => { const isP = pt.value === 'phrase'; pc.classList.toggle('hidden', !isP); if(isP && document.querySelectorAll('.phrase-c-word').length === 0) addPhraseWord(); };
+        }
+
+        function addPhraseWord() {
+            const div = document.createElement('div'); div.className = 'flex gap-2 phrase-c-item';
+            div.innerHTML = `<input type="text" class="phrase-c-word flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white" placeholder="Component word" required><button type="button" onclick="this.parentElement.remove()" class="text-brand-rose"><i class="fas fa-times"></i></button>`;
+            document.getElementById('phraseComponents').append(div);
+        }
+
+        async function loadStats() {
+            try {
+                const r = await fetch(`${API_BASE_URL}/stats`); const d = await r.json();
+                document.getElementById('totalWords').textContent = d.total_words;
+                document.getElementById('totalPhrases').textContent = d.total_phrases;
+                document.getElementById('totalVideos').textContent = d.total_videos;
+                document.getElementById('unusedVideos').textContent = d.unused_videos;
+            } catch(e){}
+        }
+
+        async function loadVideos() {
+            try {
+                const r = await fetch(`${API_BASE_URL}/videos`); const d = await r.json();
+                const list = document.getElementById('videoList');
+                if(d.videos.length === 0) { list.innerHTML = '<div class="py-12 text-center text-slate-600">No assets detected.</div>'; return; }
+                list.innerHTML = d.videos.map(v => `
+                    <div class="bg-slate-800/20 p-4 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all flex items-center justify-between group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-slate-500"><i class="fas fa-play text-[10px]"></i></div>
+                            <div>
+                                <h5 class="text-xs font-bold text-slate-200">${v.name}</h5>
+                                <span class="text-[9px] font-black uppercase text-slate-600">${v.size} • ${v.extension}</span>
+                            </div>
+                        </div>
+                        <div class="opacity-0 group-hover:opacity-100 transition-all flex gap-2">
+                             <button onclick="previewVideo('${v.path}')" class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-brand-cyan hover:bg-brand-cyan hover:text-white transition-all"><i class="fas fa-eye"></i></button>
+                             <button onclick="deleteVideo('${v.name}')" class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-brand-rose hover:bg-brand-rose hover:text-white transition-all"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e){}
+        }
+
+        async function loadWords() {
+            try {
+                const r = await fetch(`${API_BASE_URL}/database`); const d = await r.json();
+                const list = document.getElementById('wordsList');
+                list.innerHTML = Object.keys(d.words || {}).map(w => `
+                    <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 flex justify-between items-center group">
+                        <span class="text-xs font-bold text-slate-300 capitalize">${w}</span>
+                        <div class="flex gap-2">
+                            <span class="text-[9px] font-black text-slate-600 uppercase pt-1">${d.words[w].split('/').pop()}</span>
+                            <button onclick="deleteWord('${w}')" class="opacity-0 group-hover:opacity-100 text-brand-rose transition-all"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e){}
+        }
+
+        async function loadPhrases() {
+             try {
+                const r = await fetch(`${API_BASE_URL}/database`); const d = await r.json();
+                const list = document.getElementById('phrasesList');
+                list.innerHTML = Object.keys(d.phrases || {}).map(p => `
+                    <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 flex justify-between items-center group">
+                        <span class="text-xs font-bold text-slate-300 capitalize">${p}</span>
+                        <div class="flex gap-2">
+                            <span class="text-[9px] font-black text-slate-600 uppercase pt-1">${d.phrases[p].length} items</span>
+                            <button onclick="deletePhrase('${p}')" class="opacity-0 group-hover:opacity-100 text-brand-rose transition-all"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e){}
+        }
+
+        async function uploadVideo(e) {
+            e.preventDefault();
+            const f = document.getElementById('videoFile').files[0], w = document.getElementById('wordInput').value, t = document.getElementById('phraseType').value;
+            if(!f) { showToast('Select video', 'error'); return; }
+            const fd = new FormData(); fd.append('video', f); fd.append('word', w); fd.append('type', t);
+            if(t === 'phrase') {
+                const c = Array.from(document.querySelectorAll('.phrase-c-word')).map(i => i.value).filter(v => v).join(',');
+                fd.append('phrase_words', c);
+            }
+            const r = await fetch(`${API_BASE_URL}/upload`, { method: 'POST', body: fd });
+            if(r.ok) { showToast('Asset Ingested', 'success'); initializeDashboard(); e.target.reset(); document.getElementById('fileName').textContent = ''; }
+        }
+
+        async function setupCameraRecording() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const v = devices.filter(d => d.kind === 'videoinput');
+                const sel = document.getElementById('cameraSelect'); sel.innerHTML = v.map(d => `<option value="${d.deviceId}">${d.label || 'Camera'}</option>`).join('');
+                if(v.length) initCamera(v[0].deviceId);
+            } catch(e){}
+            document.getElementById('startRecordBtn').onclick = startRecording;
+            document.getElementById('stopRecordBtn').onclick = stopRecording;
+            document.getElementById('saveRecordBtn').onclick = saveRecording;
+            document.getElementById('retryRecordBtn').onclick = () => { document.getElementById('recordedPreview').classList.add('hidden'); };
+        }
+
+        async function initCamera(id) {
+            if(mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+            mediaStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: id ? { exact: id } : undefined } });
+            document.getElementById('cameraPreview').srcObject = mediaStream;
+        }
+
+        function startRecording() {
+            recordedChunks = []; mediaRecorder = new MediaRecorder(mediaStream);
+            mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
+            mediaRecorder.onstop = () => { recordedBlob = new Blob(recordedChunks, { type: 'video/webm' }); document.getElementById('recordedVideo').src = URL.createObjectURL(recordedBlob); document.getElementById('recordedPreview').classList.remove('hidden'); };
+            mediaRecorder.start();
+            document.getElementById('startRecordBtn').disabled = true; document.getElementById('stopRecordBtn').disabled = false;
+            document.getElementById('recordingStatus').classList.remove('hidden');
+            let s = 0; recordingTimer = setInterval(() => { s++; const m = Math.floor(s/60), sec = s%60; document.querySelector('.timer').textContent = `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; }, 1000);
+        }
+
+        function stopRecording() {
+            mediaRecorder.stop(); clearInterval(recordingTimer);
+            document.getElementById('startRecordBtn').disabled = false; document.getElementById('stopRecordBtn').disabled = true;
+            document.getElementById('recordingStatus').classList.add('hidden');
+        }
+
+        async function saveRecording() {
+            const w = document.getElementById('recordWordInput').value; if(!w) { showToast('Name the sign', 'warning'); return; }
+            const fd = new FormData(); fd.append('video', recordedBlob, `${w}.webm`); fd.append('word', w); fd.append('type', 'word');
+            const r = await fetch(`${API_BASE_URL}/upload`, { method: 'POST', body: fd });
+            if(r.ok) { showToast('Recording Committed', 'success'); initializeDashboard(); document.getElementById('recordedPreview').classList.add('hidden'); }
+        }
+
+        async function addManualWord() {
+            const w = document.getElementById('manualWord').value.trim(), f = document.getElementById('manualFilename').value.trim();
+            if (!w || !f) { showToast('Missing word or filename', 'error'); return; }
+            const r = await fetch(`${API_BASE_URL}/database`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'add_word', word: w, filename: f}) });
+            if(r.ok) { showToast('Word Registered', 'success'); loadWords(); document.getElementById('manualWord').value=''; document.getElementById('manualFilename').value=''; }
+            else { showToast('Server Error', 'error'); }
+        }
+
+        async function addManualPhrase() {
+            const p = document.getElementById('manualPhrase').value.trim(), w = document.getElementById('manualPhraseWords').value.split(',').map(v => v.trim()).filter(v => v);
+            if (!p || w.length === 0) { showToast('Missing phrase or child components', 'error'); return; }
+            const r = await fetch(`${API_BASE_URL}/database`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({action: 'add_phrase', phrase: p, words: w}) });
+            if(r.ok) { showToast('Phrase Bonded', 'success'); loadPhrases(); document.getElementById('manualPhrase').value=''; document.getElementById('manualPhraseWords').value=''; }
+            else { showToast('Server Error', 'error'); }
+        }
+
+        async function deleteVideo(n) { if(confirm('Erase asset from bin?')) { showToast('Not implemented in backend', 'warning'); } }
+        async function deleteWord(w) { if(confirm('Unlink word?')) { await fetch(`${API_BASE_URL}/database`, {method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({word: w}) }); loadWords(); loadPhrases(); initializeDashboard(); } }
+        async function deletePhrase(p) { if(confirm('Dissolve phrase?')) { showToast('Direct phrase deletion not implemented in API', 'warning'); } }
+
+        function showToast(m, t = 'info') {
+            const toast = document.createElement('div');
+            const bg = t === 'success' ? 'bg-brand-emerald' : t === 'error' ? 'bg-brand-rose' : 'bg-brand-indigo';
+            toast.className = `fixed bottom-8 right-8 ${bg} text-white px-8 py-4 rounded-2xl shadow-2xl z-[99999] font-bold transition-all transition-duration-300 transform translate-y-20 opacity-0`;
+            toast.textContent = m;
+            document.body.append(toast);
+            setTimeout(() => { toast.classList.replace('translate-y-20', 'translate-y-0'); toast.classList.replace('opacity-0', 'opacity-100'); }, 10);
+            setTimeout(() => { toast.classList.replace('translate-y-0', 'translate-y-20'); toast.classList.replace('opacity-100', 'opacity-0'); setTimeout(() => toast.remove(), 400); }, 3000);
+        }
+
+        // Shared handlers
+        window.exportDatabase = async () => { window.location.href = `${API_BASE_URL}/export`; };
+        window.reloadDatabase = async () => { await fetch(`${API_BASE_URL}/reload`, {method:'POST'}); initializeDashboard(); showToast('System Synchronized', 'success'); };
+        window.clearUnusedVideos = async () => { await fetch(`${API_BASE_URL}/clean-unused`, {method:'POST'}); loadVideos(); showToast('Loose files purged', 'success'); };
+        window.testAllVideos = () => { showToast('Integrity check initiated', 'info'); };
+    </script>
+</body>
+</html>

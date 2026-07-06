@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TWUMVANE — Rwanda Sign Language Platform</title>
+    <meta name="description" content="TWUMVANE is an AI-powered Rwanda Sign Language platform featuring real-time sign recognition and text-to-sign translation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #030712;
+            --bg-secondary: #0a1120;
+            --bg-card: rgba(15, 23, 42, 0.7);
+            --border-subtle: rgba(99, 102, 241, 0.15);
+            --border-hover: rgba(99, 102, 241, 0.4);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-indigo: #6366f1;
+            --accent-cyan: #22d3ee;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --glow-indigo: rgba(99, 102, 241, 0.25);
+            --glow-cyan: rgba(34, 211, 238, 0.25);
+            --glow-emerald: rgba(16, 185, 129, 0.25);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== Animated background ===== */
+        .bg-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-mesh::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            top: -200px;
+            left: -200px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            animation: meshFloat1 18s ease-in-out infinite;
+        }
+
+        .bg-mesh::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            bottom: -150px;
+            right: -150px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.06) 0%, transparent 70%);
+            animation: meshFloat2 22s ease-in-out infinite;
+        }
+
+        @keyframes meshFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(80px, 60px) scale(1.1); }
+            66% { transform: translate(-40px, 80px) scale(0.95); }
+        }
+
+        @keyframes meshFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-60px, -80px) scale(1.15); }
+        }
+
+        /* Grid pattern overlay */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: particleFloat linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-20vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ===== Main content ===== */
+        .content {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        /* ===== Logo / Brand ===== */
+        .brand {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .brand-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--accent-indigo), var(--accent-cyan));
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px var(--glow-indigo);
+            animation: brandPulse 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .brand-icon::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, var(--accent-indigo), var(--accent-cyan));
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(12px);
+        }
+
+        @keyframes brandPulse {
+            0%, 100% { box-shadow: 0 8px 32px var(--glow-indigo); }
+            50% { box-shadow: 0 12px 48px var(--glow-cyan); }
+        }
+
+        .brand h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 50%, var(--accent-indigo) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .brand .tagline {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .brand .tagline strong {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        /* ===== Divider ===== */
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-indigo), var(--accent-cyan));
+            border-radius: 3px;
+            margin: 28px auto 36px;
+        }
+
+        /* ===== Section label ===== */
+        .section-label {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .section-label h2 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        /* ===== Cards grid ===== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 28px;
+            max-width: 820px;
+            width: 100%;
+        }
+
+        @media (max-width: 680px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                max-width: 400px;
+            }
+        }
+
+        /* ===== Card button ===== */
+        .card-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 44px 28px 36px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(16px);
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow: hidden;
+        }
+
+        .card-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card-btn:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-hover);
+        }
+
+        .card-btn:hover::before {
+            opacity: 1;
+        }
+
+        .card-btn:active {
+            transform: translateY(-2px);
+        }
+
+        /* RSL card */
+        .card-btn.rsl::before {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, rgba(34, 211, 238, 0.04) 100%);
+        }
+        .card-btn.rsl:hover {
+            border-color: rgba(16, 185, 129, 0.35);
+            box-shadow: 0 12px 48px rgba(16, 185, 129, 0.12), 0 0 0 1px rgba(16, 185, 129, 0.15);
+        }
+
+        /* TRSL card */
+        .card-btn.trsl::before {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(244, 63, 94, 0.04) 100%);
+        }
+        .card-btn.trsl:hover {
+            border-color: rgba(99, 102, 241, 0.35);
+            box-shadow: 0 12px 48px rgba(99, 102, 241, 0.12), 0 0 0 1px rgba(99, 102, 241, 0.15);
+        }
+
+        /* Card icon */
+        .card-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: #fff;
+            margin-bottom: 24px;
+            position: relative;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .card-btn:hover .card-icon {
+            transform: scale(1.08);
+        }
+
+        .card-icon.rsl-icon {
+            background: linear-gradient(135deg, #10b981, #22d3ee);
+            box-shadow: 0 6px 24px var(--glow-emerald);
+        }
+
+        .card-btn:hover .card-icon.rsl-icon {
+            box-shadow: 0 10px 36px var(--glow-emerald);
+        }
+
+        .card-icon.trsl-icon {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            box-shadow: 0 6px 24px var(--glow-indigo);
+        }
+
+        .card-btn:hover .card-icon.trsl-icon {
+            box-shadow: 0 10px 36px var(--glow-indigo);
+        }
+
+        /* Card text */
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .card-subtitle {
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 14px;
+        }
+
+        .card-btn.rsl .card-subtitle { color: var(--accent-emerald); }
+        .card-btn.trsl .card-subtitle { color: var(--accent-indigo); }
+
+        .card-desc {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            text-align: center;
+            max-width: 280px;
+        }
+
+        /* Card arrow */
+        .card-arrow {
+            position: absolute;
+            bottom: 18px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: all 0.35s ease;
+            opacity: 0;
+            transform: translateX(-6px);
+        }
+
+        .card-btn.rsl .card-arrow {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--accent-emerald);
+        }
+        .card-btn.trsl .card-arrow {
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--accent-indigo);
+        }
+
+        .card-btn:hover .card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ===== Feature pills ===== */
+        .card-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 18px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .pill.emerald {
+            background: rgba(16, 185, 129, 0.1);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+        }
+
+        .pill.indigo {
+            background: rgba(99, 102, 241, 0.1);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.15);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            margin-top: 56px;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .footer .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 12px;
+        }
+
+        .footer .tech-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer .tech-badge i {
+            font-size: 0.7rem;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 480px) {
+            .brand h1 { font-size: 2.2rem; }
+            .brand .tagline { font-size: 0.95rem; }
+            .card-btn { padding: 36px 20px 30px; }
+            .card-icon { width: 60px; height: 60px; font-size: 1.5rem; }
+            .card-title { font-size: 1.15rem; }
+        }
+
+        /* ===== Entrance animations ===== */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.7s ease forwards;
+        }
+
+        .fade-up:nth-child(1) { animation-delay: 0.1s; }
+        .fade-up:nth-child(2) { animation-delay: 0.2s; }
+        .fade-up:nth-child(3) { animation-delay: 0.35s; }
+        .fade-up:nth-child(4) { animation-delay: 0.5s; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-btn {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .cards-grid.loaded .card-btn:nth-child(1) {
+            animation: cardReveal 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s forwards;
+        }
+        .cards-grid.loaded .card-btn:nth-child(2) {
+            animation: cardReveal 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.55s forwards;
+        }
+
+        @keyframes cardReveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated background -->
+    <div class="bg-mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Brand -->
+        <div class="brand fade-up">
+            <div class="brand-icon">
+                <i class="fas fa-hands-asl-interpreting"></i>
+            </div>
+            <h1>TWUMVANE</h1>
+            <p class="tagline">
+                AI-powered <strong>Rwanda Sign Language</strong> platform — bridging communication through intelligent recognition & translation.
+            </p>
+        </div>
+
+        <div class="divider fade-up"></div>
+
+        <div class="section-label fade-up">
+            <h2>Choose Your Module</h2>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-grid" id="cardsGrid">
+
+            <!-- RSL Card -->
+            <a href="/rsl" class="card-btn rsl" id="rslCard">
+                <div class="card-icon rsl-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <div class="card-subtitle">RSL</div>
+                <div class="card-title">Sign Language Recognition</div>
+                
+                {% if status and not status.RSL.loaded %}
+                <div class="pill rose" style="margin-bottom: 15px; background: rgba(244, 63, 94, 0.1); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.2);">
+                    <i class="fas fa-exclamation-circle"></i> Module Not Loaded
+                </div>
+                <p class="card-desc" style="color: #fda4af; font-size: 0.8rem; margin-top: -10px; margin-bottom: 15px;">
+                    Error: {{ status.RSL.error }}<br>
+                    <span style="opacity: 0.8">Please run from a terminal with the correct environment.</span>
+                </p>
+                {% else %}
+                <p class="card-desc">
+                    Real-time camera-based sign language detection using AI.
+                    Show signs and get instant translations.
+                </p>
+                {% endif %}
+                <div class="card-features">
+                    <span class="pill emerald"><i class="fas fa-bolt"></i> Real-time</span>
+                    <span class="pill emerald"><i class="fas fa-brain"></i> CNN+LSTM</span>
+                    <span class="pill emerald"><i class="fas fa-camera"></i> Camera</span>
+                </div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- TRSL Card -->
+            <a href="/trsl" class="card-btn trsl" id="trslCard">
+                <div class="card-icon trsl-icon">
+                    <i class="fas fa-language"></i>
+                </div>
+                <div class="card-subtitle">TRSL</div>
+                <div class="card-title">Text to Sign Language</div>
+                
+                {% if status and not status.TRSL.loaded %}
+                <div class="pill rose" style="margin-bottom: 15px; background: rgba(244, 63, 94, 0.1); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.2);">
+                    <i class="fas fa-exclamation-circle"></i> Module Not Loaded
+                </div>
+                <p class="card-desc" style="color: #fda4af; font-size: 0.8rem; margin-top: -10px; margin-bottom: 15px;">
+                    Error: {{ status.TRSL.error }}<br>
+                    <span style="opacity: 0.8">Ensure all dependencies are installed.</span>
+                </p>
+                {% else %}
+                <p class="card-desc">
+                    Convert typed text into sign language video sequences.
+                    Seamless video playback with phrase matching.
+                </p>
+                {% endif %}
+                <div class="card-features">
+                    <span class="pill indigo"><i class="fas fa-keyboard"></i> Text Input</span>
+                    <span class="pill indigo"><i class="fas fa-film"></i> Video</span>
+                    <span class="pill indigo"><i class="fas fa-puzzle-piece"></i> Phrases</span>
+                </div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="footer fade-up">
+            <p>&copy; 2024 TWUMVANE — Rwanda Sign Language Platform</p>
+            <div class="tech-stack">
+                <span class="tech-badge"><i class="fab fa-python"></i> Flask</span>
+                <span class="tech-badge"><i class="fas fa-brain"></i> PyTorch</span>
+                <span class="tech-badge"><i class="fas fa-hand-sparkles"></i> MediaPipe</span>
+                <span class="tech-badge"><i class="fas fa-video"></i> FFmpeg</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Particles -->
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const colors = [
+                'rgba(99, 102, 241, 0.15)',
+                'rgba(34, 211, 238, 0.12)',
+                'rgba(16, 185, 129, 0.1)',
+                'rgba(168, 85, 247, 0.1)'
+            ];
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDuration = (Math.random() * 15 + 12) + 's';
+                particle.style.animationDelay = (Math.random() * 10) + 's';
+                document.body.appendChild(particle);
+            }
+        }
+
+        // Trigger card entrance
+        window.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            setTimeout(() => {
+                document.getElementById('cardsGrid').classList.add('loaded');
+            }, 100);
+        });
+    </script>
+</body>
+</html>
