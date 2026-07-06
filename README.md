@@ -7,7 +7,7 @@ TWUMVANE is a web-based platform for Rwanda Sign Language (RSL) support. It comb
 - video upload, management, and playback features
 - a simple admin area for managing translation assets
 
-## Project Overview   dfdfd
+## Project Overview 
 
 This project is designed to help users interact with sign-language content through a web interface. The main application is served from the project root, while the TRSL functionality is organized under the TRSL folder.
 
